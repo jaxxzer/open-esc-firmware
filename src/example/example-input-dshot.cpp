@@ -19,7 +19,7 @@
 
 Dma dmaChannel = Dma( TIMER_DMA_CHANNEL );
 
-Gpio gpioLed { GPIO_LED_RED_PORT, GPIO_LED_RED_PIN };
+Gpio gpioLed { GPIO_PORT_LED_RED, GPIO_PIN_LED_RED };
 
 Timer &timerCapture = CAPTURE_TIMER;
 Gpio gpioCapture{ GPIO_CAPTURE_PORT, GPIO_CAPTURE_PIN };
