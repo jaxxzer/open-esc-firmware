@@ -33,6 +33,28 @@ Project roadmap:
 - Support for PAC5523
 - Switch from stm32-lib to STM LL, libopencm3 or bare-metal
 
+To build the main application:
+```sh
+make main
+```
+
+To build an example, use the name of the example:
+```sh
+make example-audio
+```
+
+To flash the program after building, add `-flash` to the end of the make target:
+```sh
+make main-flash
+```
+
+To specify the target, use `TARGET=` (the default target is `gsc`):
+```sh
+make main-flash TARGET=nucleo-f334
+```
+
+This project's [`launch.json`](.vscode/launch.json) will allow you to debug the program in vscode with the cortex debug extension using an st-link programmer and openocd.
+
 **Be Advised:** I am developing my understanding of motor control and embedded programming as I work on this project. I am not an expert (yet). Many cool open source projects already exist to control brushless motors. Some day, I might choose to retire this project in favor of developing further one or more of these:
 
 - [phobia](https://bitbucket.org/amaora/phobia) (stm32, foc)
