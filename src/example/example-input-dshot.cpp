@@ -124,7 +124,7 @@ int main() {
 
         csumCheck &= 0xf;
 
-        printf("%d %d %d %d\r\n", throttle, telemRequest, csum, csumCheck);
+        printf("throttle command: %d telem request: %d checksum: %d calculated: %d\r\n", throttle, telemRequest, csum, csumCheck);
                 
         // get statistics on packets/second
         //printf("  %d  %d  %d\r\n", packet, decodedPackets, microseconds);
