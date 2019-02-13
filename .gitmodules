@@ -1,0 +1,6 @@
+[submodule "lib/stm32-lib"]
+	path = lib/stm32-lib
+	url = https://github.com/jaxxzer/stm32-lib
+[submodule "lib/--force"]
+	path = lib/--force
+	url = https://github.com/jaxxzer/stm32-lib

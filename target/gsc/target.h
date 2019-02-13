@@ -1,0 +1,84 @@
+/*
+ * Pin Assignments
+ * IO
+ * Input - PA2
+ * USART1_TX - A9
+ * USART1_RX - A10
+ * 
+ * Phases
+ * Feedback
+ * 
+ * DMA Allocation
+ * 
+ * Timer Allocation
+ * 
+ */
+
+#define GPIO_PORT_BEMF GPIOA
+#define GPIO_PIN_BEMF_U 4
+#define GPIO_PIN_BEMF_V 5
+#define GPIO_PIN_BEMF_W 0
+#define GPIO_PIN_BEMF_NEUTRAL 1
+
+#define ADC_CHAN_VOLTAGE_U ADC_Channel_5
+#define ADC_CHAN_VOLTAGE_V ADC_Channel_6
+#define ADC_CHAN_VOLTAGE_W ADC_Channel_1
+#define ADC_CHAN_VOLTAGE_NEUTRAL ADC_Channel_2
+#define ADC_CHAN_INPUT ADC_Channel_4
+
+#define USE_USART_1
+#define STDOUT_USART uart1
+#define GPIO_USART1_TX_PORT GPIOB
+#define GPIO_USART1_TX_PIN 6
+#define GPIO_USART1_RX_PORT GPIOB
+#define GPIO_USART1_RX_PIN 7
+#define GPIO_USART1_AF 0
+
+#define USE_TIM_1
+#define USE_TIM_2
+#define USE_TIM_3
+#define USE_TIM_6
+
+#define TIMER_LED_RED timer3
+#define GPIO_AF_TIMER_LED_RED 1
+#define GPIO_PORT_LED_RED GPIOC
+#define GPIO_PIN_LED_RED 13
+#define TIMER_CHANNEL_LED_RED TIM_Channel_3
+
+#define TIMER_LED_GREEN timer3
+#define GPIO_AF_TIMER_LED_GREEN 1
+#define GPIO_PORT_LED_GREEN GPIOC
+#define GPIO_PIN_LED_GREEN 12
+#define TIMER_CHANNEL_LED_GREEN TIM_Channel_2
+
+#define TIMER_LED_BLUE timer3
+#define GPIO_AF_TIMER_LED_BLUE 1
+#define GPIO_PORT_LED_BLUE GPIOC
+#define GPIO_PIN_LED_BLUE 11
+#define TIMER_CHANNEL_LED_BLUE TIM_Channel_1
+
+#define TIMER_INPUT_CAPTURE timer2
+#define GPIO_AF_TIMER_INPUT_CAPTURE 2
+#define GPIO_PORT_CAPTURE GPIOC
+#define GPIO_PIN_CAPTURE 0
+
+#define PHASE_OUTPUT_TIMER timer1
+#define GPIO_AF_TIMER_PHASE_OUTPUT 2
+#define GPIO_PORT_HIGH_U GPIOA
+#define GPIO_PORT_HIGH_V GPIOA
+#define GPIO_PORT_HIGH_W GPIOA
+
+#define GPIO_PORT_LOW_U GPIOA
+#define GPIO_PORT_LOW_V GPIOB
+#define GPIO_PORT_LOW_W GPIOB
+
+#define GPIO_PIN_HIGH_U 8
+#define GPIO_PIN_HIGH_V 9
+#define GPIO_PIN_HIGH_W 10
+
+#define GPIO_PIN_LOW_U 7
+#define GPIO_PIN_LOW_V 0
+#define GPIO_PIN_LOW_W 1
+
+#define GPIO_PORT_HALL1 GPIOA
+#define GPIO_PIN_HALL1 15
