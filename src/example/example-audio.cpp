@@ -87,7 +87,13 @@ int main() {
     mDelay(75);
   }
 
+  // freewheeling
+  tco1.setEnabledN(DISABLE);
+  tco2.setEnabledN(DISABLE);
+  tco3.setEnabledN(DISABLE);
   timer.setEnabled(DISABLE);
+
+  while(1);
 
   return 0;
 }
