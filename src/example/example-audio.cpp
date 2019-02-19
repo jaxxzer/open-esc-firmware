@@ -2,8 +2,8 @@
 // Use a dma channel to update timer CCR1 and CCR2 on update events
 // Pulse them alternately to make the rotor waggle back and forth
 // OC preload enabled!
-// Timer makes dma request on update event and dma updates CCR1
-// and CCR2 (preloaded, so they are used on the next update)
+// Timer makes dma request on each overflow and dma updates CCR1
+// and CCR2 (preloaded, so the new values are used on the subsequent overflow)
 
 #include "stm32lib-conf.h"
 
@@ -21,7 +21,7 @@ TimerChannelOutput tco3{&timer, TIM_Channel_3};
 
 // If dma transfer length (CNDTR) is 4, then alternate CCR1 and CCR2 values (400, 0)
 // If dma transfer length is 8 or 12, then a consistent pulse length is not used (500, 100 also)
-// This is to modulate some small noise in the waveform for pleasant effct.
+// This is to modulate some small noise in the waveform for pleasant effect
 uint16_t pulses[] = { 0, 400, 400, 0, 0, 500, 500, 0, 0, 100, 100, 0 };
 uint16_t notes[] = { 1500, 10000, 6000, 6500, 8000 };
 
@@ -52,8 +52,9 @@ int main() {
   // This is done via the 'dma burst' feature of the timer (DMAR)
   Dma dmaChannel = Dma(DMA1_Channel4);
 
+  // move values from pulses array to timer DMAR register
   dmaChannel.init((uint32_t) & (timer.peripheral()->DMAR), (uint32_t)&pulses[0], 12, DMA_DIR_PeripheralDST,
-              DMA_PeripheralDataSize_Word, DMA_MemoryDataSize_HalfWord, DMA_Mode_Circular, DMA_Priority_Medium,
+              DMA_PeripheralDataSize_HalfWord, DMA_MemoryDataSize_HalfWord, DMA_Mode_Circular, DMA_Priority_Medium,
               DMA_MemoryInc_Enable, DMA_PeripheralInc_Disable, DMA_M2M_Disable);
 
   dmaChannel.setEnabled(ENABLE);
@@ -62,10 +63,14 @@ int main() {
   timer.initFreq(notes[0]);
   timer.setDTG(0x18); // ~333ns deadtime insertion
 
-  // the dma request may be an unused CC (set CCR to 0 for equivalent to update request) or Update (pick what's available)
+  // the dma request may be an unused CC (set CCR to 0 for equivalent to update request)
+  // or Update (pick what's available)
   TIM_DMACmd(timer.peripheral(), TIM_DMA_CC4, ENABLE);
+
+  // timer generates two DMA requests, CCR1 and CCR2 are updated
   TIM_DMAConfig(timer.peripheral(), TIM_DMABase_CCR1, TIM_DMABurstLength_2Transfers);
   
+  // enable CCR preload
   TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
   TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Enable);
 
@@ -76,6 +81,7 @@ int main() {
   timer.setEnabled(ENABLE);
   timer.setMOE(ENABLE);
 
+  // play beep sequence
   for (uint8_t n = 0; n < 5; n++) {
     timer.setFrequency(notes[n]);
     mDelay(75);
