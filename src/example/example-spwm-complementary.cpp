@@ -65,9 +65,14 @@ int main() {
 
   timer.setMOE(ENABLE);
 
-  while (1) {
+  while (microseconds < 5000000) {
     updateSPWM();
   }
+
+  tco1.setEnabledN(DISABLE);
+  tco2.setEnabledN(DISABLE);
+  tco3.setEnabledN(DISABLE);
+  timer.setEnabled(DISABLE);
 
   return 0;
 }
