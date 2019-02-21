@@ -57,6 +57,7 @@ This project's [`launch.json`](.vscode/launch.json) will allow you to debug the 
 
 **Be Advised:** I am developing my understanding of motor control and embedded programming as I work on this project. I am not an expert (yet). Many cool open source projects already exist to control brushless motors. Some day, I might choose to retire this project in favor of developing further one or more of these:
 
+- [f051bldc](https://github.com/conuthead/f051bldc) (I see you, @conuthead)
 - [phobia](https://bitbucket.org/amaora/phobia) (stm32, foc)
 - [blheli_s](https://github.com/bitdump/BLHeli/tree/master/BLHeli_S%20SiLabs) (assembly, avr, silabs)
 - [tgy](https://github.com/sim-/tgy) (assembly, avr, silabs)
