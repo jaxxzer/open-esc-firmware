@@ -23,7 +23,7 @@ TimerChannelOutput tco3{&timer, TIM_Channel_3};
 // If dma transfer length is 8 or 12, then a consistent pulse length is not used (500, 100 also)
 // This is to modulate some small noise in the waveform for pleasant effect
 uint16_t pulses[] = { 0, 400, 400, 0, 0, 500, 500, 0, 0, 100, 100, 0 };
-uint16_t notes[] = { 1500, 10000, 6000, 6500, 8000 };
+uint16_t notes[] = { 9000, 10000, 6000, 6500, 8000 };
 
 int main() {
   configureClocks(1000);
