@@ -38,6 +38,7 @@
 #define USE_TIM_2
 #define USE_TIM_3
 #define USE_TIM_6
+#define USE_TIM_15
 
 #define TIMER_LED_RED timer3
 #define GPIO_AF_TIMER_LED_RED 1
