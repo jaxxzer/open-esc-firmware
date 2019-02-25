@@ -48,9 +48,9 @@ To flash the program after building, add `-flash` to the end of the make target:
 make main-flash
 ```
 
-To specify the target, use `TARGET=` (the default target is `gsc`):
+To specify the target hardware, use `BOARD=` (the default board is `gsc`):
 ```sh
-make main-flash TARGET=nucleo-f334
+make main-flash BOARD=nucleo-f334
 ```
 
 This project's [`launch.json`](.vscode/launch.json) will allow you to debug the program in vscode with the cortex debug extension using an st-link programmer and openocd.
