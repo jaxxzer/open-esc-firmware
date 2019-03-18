@@ -1,6 +1,7 @@
 #include "../sine-lookup.h"
 #include "stm32lib-conf.h"
 #include <math.h>
+#include "arm_math.h"
 
 // open loop sine wave modulated pwm (3 phase ac)
 // duty and resolution/speed are set by genlookup.py (sine-lookup.h)
@@ -32,7 +33,13 @@ void updateSPWM(void);
 int main() {
   configureClocks(1000);
 
-  mDelay(5000);
+// Thank you so much:
+// https://www.silabs.com/community/mcu/32-bit/knowledge-base.entry.html/2014/04/16/how_to_enable_hardwa-vM9u
+// Set floating point coprosessor access mode. */ 
+  SCB->CPACR |= ((3UL << 10*2) | /* set CP10 Full Access */ 
+  3UL << 11*2) ); /* set CP11 Full Access */ 
+
+  mDelay(2000);
 
 #if defined(STM32F0)
 #error
@@ -54,7 +61,7 @@ int main() {
 #error
 #endif
 
-  timer.initFreq(48e3); // 48kHz pwm frequency
+  timer.init(0, 1000); // 48kHz pwm frequency
   timer.setDTG(0x18); // ~333ns deadtime insertion
 
   tco1.init(TIM_OCMode_PWM1, 0, TIM_OutputState_Enable, TIM_OutputNState_Enable);
@@ -66,6 +73,7 @@ int main() {
   timer.setMOE(ENABLE);
 
   while (microseconds < 5000000) {
+    mDelay(1);
     updateSPWM();
   }
 
@@ -88,7 +96,7 @@ void setFieldAngle(float angle) {
 }
 
 void updateSPWM(void) {
-  _field_angle += 1; // to speed up, increase the increment
+  _field_angle += 5; // to speed up, increase the increment
   _field_angle = _field_angle % RESOLUTION;
   tco1.setDuty(lookup[(_field_angle + RESOLUTION1) % RESOLUTION]);
   tco2.setDuty(lookup[_field_angle]);
