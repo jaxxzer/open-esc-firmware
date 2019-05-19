@@ -73,6 +73,7 @@ int main() {
   timer.setMOE(ENABLE);
 
   while (microseconds < 5000000) {
+    mDelay(1);
     updateSPWM();
   }
 
@@ -95,7 +96,7 @@ void setFieldAngle(float angle) {
 }
 
 void updateSPWM(void) {
-  _field_angle += 1; // to speed up, increase the increment
+  _field_angle += 5; // to speed up, increase the increment
   _field_angle = _field_angle % RESOLUTION;
   tco1.setDuty(lookup[(_field_angle + RESOLUTION1) % RESOLUTION]);
   tco2.setDuty(lookup[_field_angle]);
