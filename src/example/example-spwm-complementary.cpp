@@ -1,6 +1,7 @@
 #include "../sine-lookup.h"
 #include "stm32lib-conf.h"
 #include <math.h>
+#include "arm_math.h"
 
 // open loop sine wave modulated pwm (3 phase ac)
 // duty and resolution/speed are set by genlookup.py (sine-lookup.h)
@@ -32,7 +33,13 @@ void updateSPWM(void);
 int main() {
   configureClocks(1000);
 
-  mDelay(5000);
+// Thank you so much:
+// https://www.silabs.com/community/mcu/32-bit/knowledge-base.entry.html/2014/04/16/how_to_enable_hardwa-vM9u
+// Set floating point coprosessor access mode. */ 
+  SCB->CPACR |= ((3UL << 10*2) | /* set CP10 Full Access */ 
+  3UL << 11*2) ); /* set CP11 Full Access */ 
+
+  mDelay(2000);
 
 #if defined(STM32F0)
 #error
