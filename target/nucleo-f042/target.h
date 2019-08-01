@@ -1,3 +1,5 @@
+#include <libopencm3/stm32/gpio.h>
+
 #define USE_USART_2
 #define GPIO_USART2_TX_PORT GPIOA
 #define GPIO_USART2_TX_PIN 2
@@ -5,6 +7,7 @@
 #define GPIO_USART2_RX_PIN 3
 #define GPIO_USART2_AF 1
 #define STDOUT_USART uart2
+#define GPIO_LED1_RCC RCC_GPIOB
 #define GPIO_LED1_PORT GPIOB
 #define GPIO_LED1_PIN GPIO3
 #define GPIO_LED1_MODE GPIO_Mode_AF

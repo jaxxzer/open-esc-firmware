@@ -7,8 +7,8 @@
 #define GPIO_USART2_RX_PIN 3
 #define GPIO_USART2_AF 1
 #define STDOUT_USART uart2
+#define GPIO_LED1_RCC RCC_GPIOA
 #define GPIO_LED1_PORT GPIOA
-
 #define GPIO_LED1_PIN GPIO5
 #define GPIO_LED1_MODE GPIO_Mode_AF
 #define GPIO_LED1_AF 2

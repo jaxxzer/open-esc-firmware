@@ -5,7 +5,7 @@
 
 int main()
 {
-rcc_periph_clock_enable(RCC_GPIOB);
+rcc_periph_clock_enable(GPIO_LED1_RCC);
 
 /* Set GPIO12 (in GPIO port D) to 'output push-pull'. */
 gpio_mode_setup(GPIO_LED1_PORT, GPIO_MODE_OUTPUT,
