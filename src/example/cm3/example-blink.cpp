@@ -1,17 +1,19 @@
+#include <target.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 
+
 int main()
 {
-rcc_periph_clock_enable(RCC_GPIOA);
+rcc_periph_clock_enable(RCC_GPIOB);
 
 /* Set GPIO12 (in GPIO port D) to 'output push-pull'. */
-gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT,
-        GPIO_PUPD_NONE, GPIO5);
+gpio_mode_setup(GPIO_LED1_PORT, GPIO_MODE_OUTPUT,
+        GPIO_PUPD_NONE, GPIO_LED1_PIN);
 
 
 while(1) {
-        gpio_toggle(GPIOA, GPIO5);
+        gpio_toggle(GPIO_LED1_PORT, GPIO_LED1_PIN);
         for(uint32_t i = 0; i < 100000; i++) {
                 int a = 22 * 5;
                 asm("nop");

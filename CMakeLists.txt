@@ -3,14 +3,22 @@ project(gsc-firmware)
 set(COMPILER_FLAGS "-fdata-sections -ffunction-sections")
 set(LINKER_FLAGS "-specs=nano.specs -specs=nosys.specs --static -ggdb3 -Wl,--gc-sections -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group -T ${CMAKE_SOURCE_DIR}/lib/stm32-lib/src/link/stm32-mem.ld -T ${CMAKE_SOURCE_DIR}/lib/stm32-lib/src/link/stm32.ld")
 
+message("hey")
+
 # target board
-set(TARGET_BOARD "wraith32")
+if(NOT DEFINED TARGET_BOARD)
+  set(TARGET_BOARD "nucleo-f072")
+  message("setting board for you mofo")
+endif()
 
 # target board directory
 set(TARGET_DIR "target/${TARGET_BOARD}")
 
-# include target board variables
+# include target board CMakeLists
 include(${TARGET_DIR}/CMakeLists.txt)
+
+# include target board defintions
+include_directories(${TARGET_DIR})
 
 # target part
 # TODO fail if not set
