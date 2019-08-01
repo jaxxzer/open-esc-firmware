@@ -25,7 +25,7 @@ include_directories(lib/libopencm3/include)
 #include_directories(lib/stm32-lib/driver/stm32f0/cmsis/device)
 #include_directories(lib/stm32-lib/driver/stm32f0/spl/inc)
 
-add_definitions(-DSTM32F0 -DSTM32F072)
+add_definitions(-DSTM32F0)
 
 file(GLOB STM32_F0_SRC 
 lib/libopencm3/lib/stm32/common/gpio_common_all.c
