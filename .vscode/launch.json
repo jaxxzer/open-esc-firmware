@@ -44,6 +44,19 @@
             "device": "STM32F303"
         },
         {
+            "name": "F042-nucleo",
+            "cwd": "${workspaceRoot}",
+            "executable": "build/bin/debug.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                "lib/stm32-lib/openocd/f0-nucleo.cfg"
+            ],
+            "svdFile": "lib/stm32-lib/svd/stm32f0/STM32F0x0.svd",
+            "device": "STM32F042"
+        },
+        {
             "name": "F072-nucleo",
             "cwd": "${workspaceRoot}",
             "executable": "build/bin/debug.elf",
