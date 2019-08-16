@@ -1,3 +1,6 @@
 [submodule "lib/--force"]
 	path = lib/--force
 	url = https://github.com/jaxxzer/stm32-lib
+[submodule "lib/stm32-boilerplate"]
+	path = lib/stm32-boilerplate
+	url = https://github.com/jaxxzer/stm32-boilerplate
