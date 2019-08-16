@@ -33,24 +33,17 @@ Project roadmap:
 - Support for PAC5523
 - Switch from stm32-lib to STM LL, libopencm3 or bare-metal
 
-To build the main application:
+To build the main application for the selected [target board](src/target) (the default board is `gsc`):
 ```sh
-make main
+mkdir -p build
+cd build
+cmake --configure -DTARGET_BOARD=wraith32 ..
+make
 ```
 
-To build an example, use the name of the example:
+To flash the program after building (with openocd and st-link programmer), use the `flash` make target:
 ```sh
-make example-audio
-```
-
-To flash the program after building, add `-flash` to the end of the make target:
-```sh
-make main-flash
-```
-
-To specify the target hardware, use `BOARD=` (the default board is `gsc`):
-```sh
-make main-flash BOARD=nucleo-f334
+make flash
 ```
 
 This project's [`launch.json`](.vscode/launch.json) will allow you to debug the program in vscode with the cortex debug extension using an st-link programmer and openocd.
