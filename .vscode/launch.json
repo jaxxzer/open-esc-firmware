@@ -7,90 +7,90 @@
         {
             "name": "F030",
             "cwd": "${workspaceRoot}",
-            "executable": "build/bin/debug.elf",
+            "executable": "build/debug.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
             "configFiles": [
-                "lib/stm32-lib/openocd/f0.cfg"
+                "lib/stm32-boilerplate/lib/openocd/f0.cfg"
             ],
-            "svdFile": "lib/stm32-lib/svd/stm32f0/STM32F0x0.svd",
+            "svdFile": "lib/stm32-boilerplate/lib/svd/stm32f0/STM32F0x0.svd",
             "device": "STM32F030"
         },
         {
             "name": "F103",
             "cwd": "${workspaceRoot}",
-            "executable": "build/bin/debug.elf",
+            "executable": "build/debug.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
             "configFiles": [
-                "lib/stm32-lib/openocd/f1.cfg"
+                "lib/stm32-boilerplate/lib/openocd/f1.cfg"
             ],
-            "svdFile": "lib/stm32-lib/svd/stm32f1/STM32F103.svd",
+            "svdFile": "lib/stm32-boilerplate/lib/svd/stm32f1/STM32F103.svd",
             "device": "STM32F103"
         },
         {
             "name": "F303",
             "cwd": "${workspaceRoot}",
-            "executable": "build/bin/debug.elf",
+            "executable": "build/debug.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
             "configFiles": [
-                "lib/stm32-lib/openocd/f3.cfg"
+                "lib/stm32-boilerplate/lib/openocd/f3.cfg"
             ],
-            "svdFile": "lib/stm32-lib/svd/stm32f3/STM32F303.svd",
+            "svdFile": "lib/stm32-boilerplate/lib/svd/stm32f3/STM32F303.svd",
             "device": "STM32F303"
         },
         {
             "name": "F072-nucleo",
             "cwd": "${workspaceRoot}",
-            "executable": "build/bin/debug.elf",
+            "executable": "build/debug.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
             "configFiles": [
-                "lib/stm32-lib/openocd/f0-nucleo.cfg"
+                "lib/stm32-boilerplate/lib/openocd/f0-nucleo.cfg"
             ],
-            "svdFile": "lib/stm32-lib/svd/stm32f0/STM32F0x0.svd",
+            "svdFile": "lib/stm32-boilerplate/lib/svd/stm32f0/STM32F0x2.svd",
             "device": "STM32F072"
         },
         {
             "name": "F103-nucleo",
             "cwd": "${workspaceRoot}",
-            "executable": "build/bin/debug.elf",
+            "executable": "build/debug.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
             "configFiles": [
-                "lib/stm32-lib/openocd/f1-nucleo.cfg"
+                "lib/stm32-boilerplate/lib/openocd/f1-nucleo.cfg"
             ],
-            "svdFile": "lib/stm32-lib/svd/stm32f1/STM32F103.svd",
+            "svdFile": "lib/stm32-boilerplate/lib/svd/stm32f1/STM32F103.svd",
             "device": "STM32F103"
         },
         {
             "name": "F303-nucleo",
             "cwd": "${workspaceRoot}",
-            "executable": "build/bin/debug.elf",
+            "executable": "build/debug.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
             "configFiles": [
-                "lib/stm32-lib/openocd/f3-nucleo.cfg"
+                "lib/stm32-boilerplate/lib/openocd/f3-nucleo.cfg"
             ]
         },
         {
             "name": "F334-nucleo",
             "cwd": "${workspaceRoot}",
-            "executable": "build/bin/debug.elf",
+            "executable": "build/debug.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
             "configFiles": [
-                "lib/stm32-lib/openocd/f3-nucleo.cfg"
+                "lib/stm32-boilerplate/lib/openocd/f3-nucleo.cfg"
             ],
-            "svdFile": "lib/stm32-lib/svd/stm32f3/STM32F3x4.svd",
+            "svdFile": "lib/stm32-boilerplate/lib/svd/stm32f3/STM32F3x4.svd",
             "device": "STM32F334"
         }
     ]
