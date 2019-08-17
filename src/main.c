@@ -3,8 +3,13 @@
 
 #include <target.h>
 
+#include <console.h>
+
 int main()
 {
+  console_initialize();
+  console_write("Welcome to gsc, the gangster esc!\r\n");
+
   rcc_periph_clock_enable(LED_GPIO_RCC);
 
   gpio_mode_setup(LED_GPIO_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_GPIO_PIN);
