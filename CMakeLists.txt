@@ -50,9 +50,19 @@ set(MAIN_SRC
   src/main.c
   ${GPIO_SRC}
   ${RCC_SRC}
+  ${USART_SRC}
 )
 
-set(COMMON_SRC ${BOILERPLATE}/lib/libopencm3/lib/cm3/vector.c)
+include_directories(
+  ${PROJECT_SOURCE_DIR}/src/hal/inc
+  ${PROJECT_SOURCE_DIR}/src/main/inc
+)
+
+set(COMMON_SRC
+  ${BOILERPLATE}/lib/libopencm3/lib/cm3/vector.c
+  ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/usart.c
+  ${PROJECT_SOURCE_DIR}/src/main/src/console.c
+)
 
 add_executable(main ${MAIN_SRC} ${COMMON_SRC})
 
