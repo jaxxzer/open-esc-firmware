@@ -4,11 +4,14 @@
 #include <target.h>
 
 #include <console.h>
+#include <pwm-input.h>
 
 int main()
 {
   console_initialize();
   console_write("Welcome to gsc, the gangster esc!\r\n");
+
+  pwm_input_initialize();
 
   rcc_periph_clock_enable(LED_GPIO_RCC);
 
@@ -16,8 +19,8 @@ int main()
 
   while (1) {
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
-    for (long i = 0; i < 1000000; i++) {
-      asm("nop");
-    }
+    console_write("pwm: ");
+    console_write_int(pwm_input_get_duty());
+    console_write("\r\n");
   }
 }
