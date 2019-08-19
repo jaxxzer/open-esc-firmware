@@ -4,12 +4,13 @@ The aim of this project is to produce an ESC that is very high performing, widel
 
 GSC will run on these target microcontrollers:
 
-- Giga Device GD32 F350 series (108 MHz M4F @ 0.50~1.00$ that's *gangster*!)
+- Giga Device GD32 F350 series (108 MHz M4F @ 0.50~1.00$ that's *gangster*!) (in development)
 - STM32 F0 series (in development)
 - STM32 F3 series (in development)
 - STM32 G0 series (planned)
+- STM32 G4 series (planned)
 - STSPIN series (planned)
-- Active Semi PAC5523 (planned)
+- Active Semi PAC5523 (anticipated)
 
 [gsc-hardware](https://github.com/jaxxzer/gsc-hardware) is a repository of hardware designs supported by this firmware.
 
