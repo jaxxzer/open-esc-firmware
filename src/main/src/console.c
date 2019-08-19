@@ -7,6 +7,7 @@
 #include <target.h>
 
 #include <usart.h>
+#include <pwm-input.h>
 
 void console_initialize() {
     rcc_periph_clock_enable(CONSOLE_TX_GPIO_RCC);
@@ -29,4 +30,16 @@ void console_write(const char* string)
 void console_write_int(const uint32_t i)
 {
     usart_write_int(CONSOLE_USART, i);
+}
+
+void console_write_pwm_info()
+{
+    console_write_int(g_pwm_type);
+    console_write("\tthrottle: ");
+    console_write_int(pwm_input_get_throttle());
+    console_write("\tduty: ");
+    console_write_int(pwm_input_get_duty_ns());
+    console_write("\tperiod: ");
+    console_write_int(pwm_input_get_period_ns());
+    console_write("\r\n");
 }
