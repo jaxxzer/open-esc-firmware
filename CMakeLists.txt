@@ -61,6 +61,7 @@ include_directories(
 
 set(COMMON_SRC
   ${BOILERPLATE}/lib/libopencm3/lib/cm3/vector.c
+  ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/bridge.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/pwm-input.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/usart.c
   ${PROJECT_SOURCE_DIR}/src/main/src/console.c
