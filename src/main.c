@@ -1,22 +1,51 @@
+#include <console.h>
+#include <pwm-input.h>
+#include <bridge.h>
+
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
 
 #include <target.h>
 
-#include <console.h>
-#include <pwm-input.h>
-
 int main()
 {
   console_initialize();
   console_write("\r\nWelcome to gsc, the gangster esc!\r\n");
+
+  console_write("testing bridge...\r\n");
+
+  bridge_initialize();
+  bridge_enable();
+  bridge_set_state(BRIDGE_STATE_AUDIO);
+  bridge_set_audio_duty(0xf);
+
+  bridge_set_audio_frequency(800);
+  for (int i = 0; i < 9999; i++) { i -= 1; float a = 0.6*9;i += 1; }
+  bridge_set_audio_frequency(2000);
+  for (int i = 0; i < 9999; i++) { float a = 0.6*9; }
+  bridge_set_audio_frequency(3500);
+  for (int i = 0; i < 9999; i++) { float a = 0.6*9; }
+
+  bridge_set_state(BRIDGE_STATE_RUN);
+
+  for (int i = 0; i < 12; i++) {
+    bridge_commutate();
+    for (int i = 0; i < 2048; i++)
+    {
+      bridge_set_run_duty(i);
+    }
+  }
+
+  bridge_disable();
 
   pwm_input_initialize();
 
   rcc_periph_clock_enable(LED_GPIO_RCC);
 
   gpio_mode_setup(LED_GPIO_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_GPIO_PIN);
+
+  console_write("waiting for pwm input...\r\n");
 
   uint8_t succeded = 0;
   const uint8_t succeded_needed = 3;
