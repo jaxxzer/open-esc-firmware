@@ -1,6 +1,7 @@
+#include <bridge.h>
+#include <comparator.h>
 #include <console.h>
 #include <pwm-input.h>
-#include <bridge.h>
 
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
@@ -8,10 +9,17 @@
 
 #include <target.h>
 
+void comparator_zc_isr()
+{
+  // blank for 1ms
+  comparator_blank(1000000);
+  gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+}
+
 int main()
 {
   console_initialize();
-  console_write("\r\nWelcome to gsc, the gangster esc!\r\n");
+  console_write("\r\nWelcome to gsc: the gangster esc!\r\n");
 
   console_write("testing bridge...\r\n");
 
@@ -31,13 +39,20 @@ int main()
 
   for (int i = 0; i < 12; i++) {
     bridge_commutate();
-    for (int i = 0; i < 2048; i++)
+    for (int i = 0; i < 400; i++)
     {
       bridge_set_run_duty(i);
     }
   }
 
   bridge_disable();
+
+  for (int i = 0; i < 9999; i++) { float a = 0.6*9; }
+
+  console_write("initializing comparator...\r\n");
+
+  comparator_initialize();
+  comparator_zc_isr_enable();
 
   pwm_input_initialize();
 
