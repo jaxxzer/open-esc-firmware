@@ -12,12 +12,14 @@
 #include <target.h>
 
 volatile uint16_t comparator_states[6] = {
+
     COMP_CSR_HYST_LOW | 0x041,
     COMP_CSR_HYST_LOW | 0x861,
     COMP_CSR_HYST_LOW | 0x051,
     COMP_CSR_HYST_LOW | 0x841,
     COMP_CSR_HYST_LOW | 0x061,
     COMP_CSR_HYST_LOW | 0x851,
+
 };
 
 uint32_t comparator_blank_tick_period_ns;

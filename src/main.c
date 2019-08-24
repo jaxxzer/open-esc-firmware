@@ -14,6 +14,7 @@
 void tim15_isr() {
   if (timer_get_flag(TIM15, TIM_SR_CC1IF)) {
     bridge_commutate();
+    comparator_set_state(g_bridge_comm_step);
     timer_clear_flag(TIM15, TIM_SR_CC1IF);
   } else if (timer_get_flag(TIM15, TIM_SR_CC2IF)) {
     comparator_zc_isr_enable();
@@ -23,12 +24,19 @@ void tim15_isr() {
 
 void comparator_zc_isr()
 {
-  TIM_CCR1(TIM15) = TIM_CNT(TIM15)/2;
+  uint16_t cnt = TIM_CNT(TIM15);
   TIM_CNT(TIM15) = 0;
-  TIM_CCR2(TIM15) = TIM_CCR1(TIM15)/8;
 
+  if (cnt < 40000) {
+    TIM_CCR1(TIM15) = 20000;
+  } else {
+    TIM_CCR1(TIM15) = cnt/2;
+  }
+
+  TIM_CCR2(TIM15) = TIM_CCR1(TIM15) + TIM_CCR1(TIM15)/4;
+
+  // TIM_CCR2(TIM15) = 800;
   comparator_zc_isr_disable();
-  comparator_set_state(g_bridge_comm_step);
   gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
 }
 
@@ -55,10 +63,10 @@ void start_motor()
 {
   TIM_CR1(TIM15) &= ~TIM_CR1_CEN; // disable counter
   TIM_CNT(TIM15) = 0; // set counter to zero
-  TIM_CCR1(TIM15) = 400;
-  TIM_CCR2(TIM15) = 450;
+  TIM_CCR1(TIM15) = 800;
+  TIM_CCR2(TIM15) = 1600;
   commutation_timer_enable_interrupts();
-  comparator_zc_isr_enable();
+  //comparator_zc_isr_enable();
 
   g_bridge_comm_step = BRIDGE_COMM_STEP0;
   comparator_set_state(g_bridge_comm_step);
