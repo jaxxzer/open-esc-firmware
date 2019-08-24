@@ -10,6 +10,7 @@
 #include <pwm-input.h>
 
 void console_initialize() {
+    return;
     rcc_periph_clock_enable(CONSOLE_TX_GPIO_RCC);
 
     gpio_mode_setup(CONSOLE_TX_GPIO_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, CONSOLE_TX_GPIO_PIN);
@@ -24,6 +25,7 @@ void console_initialize() {
 
 void console_write(const char* string)
 {
+    return;
    usart_write(CONSOLE_USART, string);
 }
 

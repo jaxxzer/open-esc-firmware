@@ -12,12 +12,12 @@
 #include <target.h>
 
 volatile uint16_t comparator_states[6] = {
-    0x041,
-    0x861,
-    0x061,
-    0x851,
-    0x051,
-    0x841,
+    COMP_CSR_HYST_LOW | 0x041,
+    COMP_CSR_HYST_LOW | 0x861,
+    COMP_CSR_HYST_LOW | 0x051,
+    COMP_CSR_HYST_LOW | 0x841,
+    COMP_CSR_HYST_LOW | 0x061,
+    COMP_CSR_HYST_LOW | 0x851,
 };
 
 uint32_t comparator_blank_tick_period_ns;
@@ -54,10 +54,10 @@ void comparator_initialize()
 
     rcc_periph_clock_enable(RCC_SYSCFG_COMP);
 
-    comp_select_hyst(1, COMP_CSR_HYST_HIGH);
+    comp_select_hyst(1, COMP_CSR_HYST_MED);
 
     // enable comparator (there is a startup delay)
-    comparator_set_state(COMP_STATE1);
+    comparator_set_state(COMP_STATE0);
 
     exti_set_trigger(EXTI21, EXTI_TRIGGER_BOTH);
 
@@ -72,22 +72,21 @@ void comparator_initialize()
 
 void comparator_set_state(comp_state_e new_state)
 {
-    cm3_assert(new_state <= COMP_STATES);
-
-    g_comparator_state = new_state;
-    COMP_CSR(COMP1) |= comparator_states[g_comparator_state];
+    g_comparator_state = new_state%6;
+    COMP_CSR(COMP1) = comparator_states[g_comparator_state];
 }
 
 void comparator_zc_isr_enable()
 {
-    exti_enable_request(EXTI21);
     nvic_enable_irq(COMPARATOR_ZC_IRQ);
+    exti_enable_request(EXTI21);
 }
 
 void comparator_zc_isr_disable()
 {
     nvic_disable_irq(COMPARATOR_ZC_IRQ);
     exti_disable_request(EXTI21);
+    exti_reset_request(EXTI21);
 }
 
 void comparator_blank(uint32_t nanoseconds)

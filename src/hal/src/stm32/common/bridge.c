@@ -12,7 +12,6 @@ typedef struct {
     volatile uint32_t* pwmChannel; // ccr register address to write zero
     volatile uint32_t* zeroDutyChannel1; // ccr register address to write zero
     volatile uint32_t* zeroDutyChannel2; // ccr register address to write zero
-    uint16_t comparatorState; // COMP register value
 } commutation_state_t;
 
 #define TIM1_CCR1_ADDR (volatile uint32_t *)(TIM1 + 0x34)
@@ -20,12 +19,12 @@ typedef struct {
 #define TIM1_CCR3_ADDR (volatile uint32_t *)(TIM1 + 0x3C)
 
 volatile commutation_state_t bridge_comm_states[6] = {
-    { 0x00000155, TIM1_CCR1_ADDR, TIM1_CCR2_ADDR, TIM1_CCR3_ADDR, 0x0041 },
-    { 0x00000515, TIM1_CCR1_ADDR, TIM1_CCR2_ADDR, TIM1_CCR3_ADDR, 0x0861 },
-    { 0x00000551, TIM1_CCR2_ADDR, TIM1_CCR1_ADDR, TIM1_CCR3_ADDR, 0x0061 },
-    { 0x00000155, TIM1_CCR2_ADDR, TIM1_CCR1_ADDR, TIM1_CCR3_ADDR, 0x0851 },
-    { 0x00000515, TIM1_CCR3_ADDR, TIM1_CCR1_ADDR, TIM1_CCR2_ADDR, 0x0051 },
-    { 0x00000551, TIM1_CCR3_ADDR, TIM1_CCR1_ADDR, TIM1_CCR2_ADDR, 0x0841 },
+    { 0x00000155, TIM1_CCR1_ADDR, TIM1_CCR2_ADDR, TIM1_CCR3_ADDR },
+    { 0x00000515, TIM1_CCR1_ADDR, TIM1_CCR2_ADDR, TIM1_CCR3_ADDR },
+    { 0x00000551, TIM1_CCR2_ADDR, TIM1_CCR1_ADDR, TIM1_CCR3_ADDR },
+    { 0x00000155, TIM1_CCR2_ADDR, TIM1_CCR1_ADDR, TIM1_CCR3_ADDR },
+    { 0x00000515, TIM1_CCR3_ADDR, TIM1_CCR1_ADDR, TIM1_CCR2_ADDR },
+    { 0x00000551, TIM1_CCR3_ADDR, TIM1_CCR1_ADDR, TIM1_CCR2_ADDR },
 };
 
 void bridge_gpio_setup(

@@ -8,7 +8,7 @@ set(BOILERPLATE ${PROJECT_SOURCE_DIR}/lib/stm32-boilerplate)
 set(LIBOPENCM3 ${BOILERPLATE}/lib/libopencm3)
 set(LIBOPENCM3_SRC ${LIBOPENCM3}/lib/stm32)
 
-set(COMPILER_FLAGS "-fdata-sections -ffunction-sections -O0 -DNDEBUG -Werror")
+set(COMPILER_FLAGS "-std=c99 -fdata-sections -ffunction-sections -O0 -DNDEBUG -Werror")
 set(LINKER_FLAGS "-nostartfiles -specs=nano.specs -specs=nosys.specs --static -ggdb3 -Wl,--gc-sections -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group -Wl,-Map=output.map -T ${BOILERPLATE}/src/link/stm32-mem.ld -L ${BOILERPLATE}/lib/libopencm3/lib")
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -85,7 +85,9 @@ add_custom_command(TARGET main PRE_LINK
 # 'make flash' to upload to board after compiling
 add_custom_target(flash
   # try stlink v2 first, then stlink v2-1 if that fails
-  openocd -f interface/stlink-v2.cfg -f ${OPENOCD_TARGET} -c "program debug.elf verify reset exit" ||
-  openocd -f interface/stlink-v2-1.cfg -f ${OPENOCD_TARGET} -c "program debug.elf verify reset exit"
+  /usr/bin/openocd -f interface/stlink-v2.cfg -f ${OPENOCD_TARGET} -c "program debug.elf verify reset exit" ||
+  /usr/bin/openocd -f interface/stlink-v2-1.cfg -f ${OPENOCD_TARGET} -c "program debug.elf verify reset exit"
   DEPENDS main
 )
+
+message("${OPENOCD_TARGET}")
