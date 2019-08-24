@@ -14,7 +14,7 @@
 void tim15_isr() {
   if (timer_get_flag(TIM15, TIM_SR_CC1IF)) {
     bridge_commutate();
-    comparator_set_state(5 - g_bridge_comm_step);
+    comparator_set_state(g_bridge_comm_step+4);
     timer_clear_flag(TIM15, TIM_SR_CC1IF);
   } else if (timer_get_flag(TIM15, TIM_SR_CC2IF)) {
     comparator_zc_isr_enable();
@@ -23,20 +23,27 @@ void tim15_isr() {
 }
 
 // for test
-void comparator_zc_isr()
-{
-  comparator_blank(50000);
-  comparator_set_state(g_comparator_state + 1);
-  gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
-}
+// void comparator_zc_isr()
+// {
+//   comparator_blank(50000);
+//   comparator_set_state(g_comparator_state + 1);
+//   gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+// }
+
+uint16_t zc_confirmations_required = 5;
+volatile uint16_t zc_counter;
 
 void comparator_zc_isr()
 {
+  if (zc_counter--) {
+    return;
+  }
+
   uint16_t cnt = TIM_CNT(TIM15);
   TIM_CNT(TIM15) = 0;
 
-  if (cnt < 40000) {
-    TIM_CCR1(TIM15) = 20000;
+  if (cnt < 4000) {
+    TIM_CCR1(TIM15) = 2000;
   } else {
     TIM_CCR1(TIM15) = cnt/2;
   }
@@ -46,6 +53,7 @@ void comparator_zc_isr()
   // TIM_CCR2(TIM15) = 800;
   comparator_zc_isr_disable();
   gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+  zc_counter = zc_confirmations_required;
 }
 
 void commutation_timer_enable_interrupts()
@@ -71,15 +79,17 @@ void start_motor()
 {
   TIM_CR1(TIM15) &= ~TIM_CR1_CEN; // disable counter
   TIM_CNT(TIM15) = 0; // set counter to zero
-  TIM_CCR1(TIM15) = 800;
-  TIM_CCR2(TIM15) = 1600;
+  TIM_CCR1(TIM15) = 40000;
+  TIM_CCR2(TIM15) = 60000;
+  zc_counter = zc_confirmations_required;
+
   commutation_timer_enable_interrupts();
   //comparator_zc_isr_enable();
 
   g_bridge_comm_step = BRIDGE_COMM_STEP0;
   comparator_set_state(g_bridge_comm_step);
 
-  bridge_set_run_duty(100);
+  bridge_set_run_duty(90);
   TIM_CR1(TIM15) |= TIM_CR1_CEN; // enable counter
 }
 
@@ -87,7 +97,7 @@ void commutation_timer_setup()
 {
   rcc_periph_clock_enable(RCC_TIM15);
   TIM_ARR(TIM15) = 0xffff;
-  TIM_PSC(TIM15) = 1;
+  TIM_PSC(TIM15) = 4;
 }
 
 
@@ -126,6 +136,11 @@ int main()
   rcc_periph_clock_enable(LED_GPIO_RCC);
 
   gpio_mode_setup(LED_GPIO_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_GPIO_PIN);
+
+  // for test
+  // comparator_zc_isr_enable();
+  // while(1);
+
 
   commutation_timer_setup();
   bridge_enable();
