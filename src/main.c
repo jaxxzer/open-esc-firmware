@@ -11,12 +11,32 @@
 
 #include <target.h>
 
+volatile bool starting;
+
+uint32_t zc_confirmations_required = 20;
+volatile uint32_t zc_counter;
+volatile uint8_t advance = 0;
+
+const uint16_t defaultCCR1 = 10000;
+const uint16_t defaultCCR2 = defaultCCR1 + 3000;
+
+
+void led_toggle() {
+  gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+}
+
 void tim15_isr() {
+  // check tim15 cc1 interrupt
   if (timer_get_flag(TIM15, TIM_SR_CC1IF)) {
     bridge_commutate();
-    comparator_set_state(g_bridge_comm_step+4);
+    led_toggle();
+    comparator_set_state(g_bridge_comm_step+advance);
     timer_clear_flag(TIM15, TIM_SR_CC1IF);
-  } else if (timer_get_flag(TIM15, TIM_SR_CC2IF)) {
+  }
+  // check tim15 cc2 interrupt
+  // ccr2 - ccr1 = blanking period
+  if (timer_get_flag(TIM15, TIM_SR_CC2IF)) {
+    zc_counter = zc_confirmations_required;
     comparator_zc_isr_enable();
     timer_clear_flag(TIM15, TIM_SR_CC2IF);
   }
@@ -30,25 +50,46 @@ void tim15_isr() {
 //   gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
 // }
 
-uint16_t zc_confirmations_required = 5;
-volatile uint16_t zc_counter;
 
 void comparator_zc_isr()
 {
+  // if (zc_counter ==1) {
+  //   __builtin_trap();
+  // }
+  if (TIM_CNT(TIM1) < 10) {
+    return;
+  }
+
   if (zc_counter--) {
     return;
   }
+  // if (zc_counter == 100) {
+  //   while(1);
+  // }
+
 
   uint16_t cnt = TIM_CNT(TIM15);
   TIM_CNT(TIM15) = 0;
 
-  if (cnt < 4000) {
-    TIM_CCR1(TIM15) = 2000;
+  if (cnt < defaultCCR1) {
+    starting = true;
+    TIM_CCR1(TIM15) = defaultCCR1;
+    TIM_CCR2(TIM15) = defaultCCR2;
+    return;
+    // cnt = 0x80;
+  }
+
+
+  if (starting) {
+    starting = false;
+    TIM_CCR1(TIM15) = cnt;
   } else {
+    led_toggle();
+    led_toggle();
     TIM_CCR1(TIM15) = cnt/2;
   }
 
-  TIM_CCR2(TIM15) = TIM_CCR1(TIM15) + TIM_CCR1(TIM15)/2;
+  TIM_CCR2(TIM15) = TIM_CCR1(TIM15) + TIM_CCR1(TIM15)/4;
 
   // TIM_CCR2(TIM15) = 800;
   comparator_zc_isr_disable();
@@ -77,10 +118,11 @@ void stop_motor()
 
 void start_motor()
 {
+  starting = true;
   TIM_CR1(TIM15) &= ~TIM_CR1_CEN; // disable counter
   TIM_CNT(TIM15) = 0; // set counter to zero
-  TIM_CCR1(TIM15) = 40000;
-  TIM_CCR2(TIM15) = 60000;
+  TIM_CCR1(TIM15) = defaultCCR1;
+  TIM_CCR2(TIM15) = defaultCCR2;
   zc_counter = zc_confirmations_required;
 
   commutation_timer_enable_interrupts();
@@ -89,7 +131,7 @@ void start_motor()
   g_bridge_comm_step = BRIDGE_COMM_STEP0;
   comparator_set_state(g_bridge_comm_step);
 
-  bridge_set_run_duty(90);
+  bridge_set_run_duty(80);
   TIM_CR1(TIM15) |= TIM_CR1_CEN; // enable counter
 }
 
@@ -97,10 +139,24 @@ void commutation_timer_setup()
 {
   rcc_periph_clock_enable(RCC_TIM15);
   TIM_ARR(TIM15) = 0xffff;
-  TIM_PSC(TIM15) = 4;
+  TIM_PSC(TIM15) = 1;
 }
 
 
+volatile uint16_t validCross = 0;
+
+// void detect_zero_cross()
+// {
+//   if (
+//     TIM_CNT(TIM3) > 0xff &&
+//     TIM_CNT(TIM1) > 400 &&
+//     COMP_CSR(COMP1) & COMP_CSR_OUT
+//   ) {
+//     validCross++;
+//     led_toggle();
+//   }
+//   if (validCross == )
+// }
 
 int main()
 {
@@ -108,16 +164,21 @@ int main()
   //console_write("\r\nWelcome to gsc: the gangster esc!\r\n");
 
   //console_write("testing bridge...\r\n");
-
   bridge_initialize();
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_AUDIO);
-  bridge_set_audio_duty(0x8);
+  bridge_set_audio_duty(0x6);
 
-  bridge_set_audio_frequency(800);
-  for (uint32_t i = 0; i < 60000; i++) { i -= 1; float a = 0.6*9;i += 1; }
-  bridge_set_audio_frequency(2000);
-  for (uint32_t i = 0; i < 60000; i++) { float a = 0.6*9; }
+  // bridge_set_audio_frequency(800);
+  // for (uint32_t i = 0; i < 60000; i++) { i -= 1; float a = 0.6*9;i += 1; }
+  // bridge_set_audio_frequency(2000);
+  // for (uint32_t i = 0; i < 60000; i++) { float a = 0.6*9; }
+  for (int j = 0; j < 10; j++) {
+  bridge_set_audio_frequency(8000);
+  for (uint32_t i = 0; i < 5000; i++) { float a = 0.6*9; }
+  bridge_set_audio_frequency(3000);
+  for (uint32_t i = 0; i < 10000; i++) { float a = 0.6*9; }
+  }
   bridge_set_audio_frequency(3500);
   for (uint32_t i = 0; i < 60000; i++) { float a = 0.6*9; }
 
@@ -146,7 +207,11 @@ int main()
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_RUN);
   start_motor();
-  for (uint32_t i = 0; i < 180000; i++) { float a = 0.6*9; }
+  for (uint8_t i = 0; i < 6; i++) {
+    advance = i;
+    for (uint32_t i = 0; i < 180000; i++) { float a = 0.6*9; }
+    starting = true;
+  }
   bridge_disable();
   stop_motor();
 

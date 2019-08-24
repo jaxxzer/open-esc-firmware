@@ -17,11 +17,11 @@ typedef enum {
     BRIDGE_COMM_STEP5,
 } bridge_comm_step_e;
 
-bridge_state_e g_bridge_state;
-bridge_comm_step_e g_bridge_comm_step;
+volatile bridge_state_e g_bridge_state;
+volatile bridge_comm_step_e g_bridge_comm_step;
 
-uint16_t g_bridge_run_duty; // run mode duty
-uint8_t g_bridge_audio_duty; // audio mode duty
+volatile uint16_t g_bridge_run_duty; // run mode duty
+volatile uint8_t g_bridge_audio_duty; // audio mode duty
 
 void bridge_initialize();
 void bridge_set_state(bridge_state_e state);
