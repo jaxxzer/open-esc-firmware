@@ -14,12 +14,20 @@
 void tim15_isr() {
   if (timer_get_flag(TIM15, TIM_SR_CC1IF)) {
     bridge_commutate();
-    comparator_set_state(g_bridge_comm_step);
+    comparator_set_state(5 - g_bridge_comm_step);
     timer_clear_flag(TIM15, TIM_SR_CC1IF);
   } else if (timer_get_flag(TIM15, TIM_SR_CC2IF)) {
     comparator_zc_isr_enable();
     timer_clear_flag(TIM15, TIM_SR_CC2IF);
   }
+}
+
+// for test
+void comparator_zc_isr()
+{
+  comparator_blank(50000);
+  comparator_set_state(g_comparator_state + 1);
+  gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
 }
 
 void comparator_zc_isr()
@@ -33,7 +41,7 @@ void comparator_zc_isr()
     TIM_CCR1(TIM15) = cnt/2;
   }
 
-  TIM_CCR2(TIM15) = TIM_CCR1(TIM15) + TIM_CCR1(TIM15)/4;
+  TIM_CCR2(TIM15) = TIM_CCR1(TIM15) + TIM_CCR1(TIM15)/2;
 
   // TIM_CCR2(TIM15) = 800;
   comparator_zc_isr_disable();
@@ -79,6 +87,7 @@ void commutation_timer_setup()
 {
   rcc_periph_clock_enable(RCC_TIM15);
   TIM_ARR(TIM15) = 0xffff;
+  TIM_PSC(TIM15) = 1;
 }
 
 
