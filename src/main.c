@@ -3,6 +3,8 @@
 #include <console.h>
 #include <pwm-input.h>
 
+#include "debug.h"
+
 #include <libopencm3/cm3/vector.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/gpio.h>
@@ -14,23 +16,23 @@
 volatile bool starting;
 
 uint32_t zc_confirmations_required = 20;
+const int16_t tim15psc = 3;
 volatile uint32_t zc_counter;
 volatile uint8_t advance = 0;
 
 const uint16_t defaultCCR1 = 10000;
-const uint16_t defaultCCR2 = defaultCCR1 + 3000;
+const uint16_t defaultCCR2 = defaultCCR1 + defaultCCR1/4;
 
-
-void led_toggle() {
-  gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
-}
+// void led_toggle() {
+//   gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+// }
 
 void tim15_isr() {
   // check tim15 cc1 interrupt
   if (timer_get_flag(TIM15, TIM_SR_CC1IF)) {
+    debug1_toggle();
     bridge_commutate();
-    led_toggle();
-    comparator_set_state(g_bridge_comm_step+advance);
+    comparator_set_state(5-g_bridge_comm_step+advance);
     timer_clear_flag(TIM15, TIM_SR_CC1IF);
   }
   // check tim15 cc2 interrupt
@@ -53,9 +55,6 @@ void tim15_isr() {
 
 void comparator_zc_isr()
 {
-  // if (zc_counter ==1) {
-  //   __builtin_trap();
-  // }
   if (TIM_CNT(TIM1) < 10) {
     return;
   }
@@ -63,10 +62,6 @@ void comparator_zc_isr()
   if (zc_counter--) {
     return;
   }
-  // if (zc_counter == 100) {
-  //   while(1);
-  // }
-
 
   uint16_t cnt = TIM_CNT(TIM15);
   TIM_CNT(TIM15) = 0;
@@ -79,13 +74,13 @@ void comparator_zc_isr()
     // cnt = 0x80;
   }
 
-
   if (starting) {
     starting = false;
+    debug2_toggle();
+    debug2_toggle();
     TIM_CCR1(TIM15) = cnt;
   } else {
-    led_toggle();
-    led_toggle();
+    debug2_toggle();
     TIM_CCR1(TIM15) = cnt/2;
   }
 
@@ -93,7 +88,6 @@ void comparator_zc_isr()
 
   // TIM_CCR2(TIM15) = 800;
   comparator_zc_isr_disable();
-  gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
   zc_counter = zc_confirmations_required;
 }
 
@@ -111,13 +105,13 @@ void commutation_timer_disable_interrupts()
 
 void stop_motor()
 {
-  bridge_disable();
   commutation_timer_disable_interrupts();
   comparator_zc_isr_disable();
 }
 
 void start_motor()
 {
+  debug0_toggle();
   starting = true;
   TIM_CR1(TIM15) &= ~TIM_CR1_CEN; // disable counter
   TIM_CNT(TIM15) = 0; // set counter to zero
@@ -139,40 +133,19 @@ void commutation_timer_setup()
 {
   rcc_periph_clock_enable(RCC_TIM15);
   TIM_ARR(TIM15) = 0xffff;
-  TIM_PSC(TIM15) = 1;
+  TIM_PSC(TIM15) = tim15psc;
 }
-
-
-volatile uint16_t validCross = 0;
-
-// void detect_zero_cross()
-// {
-//   if (
-//     TIM_CNT(TIM3) > 0xff &&
-//     TIM_CNT(TIM1) > 400 &&
-//     COMP_CSR(COMP1) & COMP_CSR_OUT
-//   ) {
-//     validCross++;
-//     led_toggle();
-//   }
-//   if (validCross == )
-// }
 
 int main()
 {
-  //console_initialize();
-  //console_write("\r\nWelcome to gsc: the gangster esc!\r\n");
+  debug_setup();
 
-  //console_write("testing bridge...\r\n");
+  //while(1);
   bridge_initialize();
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_AUDIO);
   bridge_set_audio_duty(0x6);
 
-  // bridge_set_audio_frequency(800);
-  // for (uint32_t i = 0; i < 60000; i++) { i -= 1; float a = 0.6*9;i += 1; }
-  // bridge_set_audio_frequency(2000);
-  // for (uint32_t i = 0; i < 60000; i++) { float a = 0.6*9; }
   for (int j = 0; j < 10; j++) {
   bridge_set_audio_frequency(8000);
   for (uint32_t i = 0; i < 5000; i++) { float a = 0.6*9; }
@@ -186,31 +159,20 @@ int main()
 
   for (int i = 0; i < 9999; i++) { float a = 0.6*9; }
 
-  //while(1);
-  
-  //console_write("initializing comparator...\r\n");
-
   comparator_initialize();
-
-  pwm_input_initialize();
-
-  rcc_periph_clock_enable(LED_GPIO_RCC);
-
-  gpio_mode_setup(LED_GPIO_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_GPIO_PIN);
 
   // for test
   // comparator_zc_isr_enable();
   // while(1);
 
-
   commutation_timer_setup();
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_RUN);
-  start_motor();
   for (uint8_t i = 0; i < 6; i++) {
+    start_motor();
     advance = i;
     for (uint32_t i = 0; i < 180000; i++) { float a = 0.6*9; }
-    starting = true;
+    stop_motor();
   }
   bridge_disable();
   stop_motor();
