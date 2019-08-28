@@ -15,13 +15,13 @@
 
 volatile bool starting;
 
-uint32_t zc_confirmations_required = 20;
-const int16_t tim15psc = 3;
+uint32_t zc_confirmations_required = 10;
+const int16_t tim15psc = 5;
 volatile uint32_t zc_counter;
 volatile uint8_t advance = 0;
 
 const uint16_t defaultCCR1 = 10000;
-const uint16_t defaultCCR2 = defaultCCR1 + defaultCCR1/4;
+const uint16_t defaultCCR2 = defaultCCR1 + defaultCCR1/8;
 
 // void led_toggle() {
 //   gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
@@ -30,9 +30,10 @@ const uint16_t defaultCCR2 = defaultCCR1 + defaultCCR1/4;
 void tim15_isr() {
   // check tim15 cc1 interrupt
   if (timer_get_flag(TIM15, TIM_SR_CC1IF)) {
+
     debug1_toggle();
     bridge_commutate();
-    comparator_set_state(5-g_bridge_comm_step+advance);
+    comparator_set_state(g_bridge_comm_step + 2);
     timer_clear_flag(TIM15, TIM_SR_CC1IF);
   }
   // check tim15 cc2 interrupt
@@ -55,7 +56,7 @@ void tim15_isr() {
 
 void comparator_zc_isr()
 {
-  if (TIM_CNT(TIM1) < 10) {
+  if (TIM_CNT(TIM1) < 120) {
     return;
   }
 
@@ -66,13 +67,7 @@ void comparator_zc_isr()
   uint16_t cnt = TIM_CNT(TIM15);
   TIM_CNT(TIM15) = 0;
 
-  if (cnt < defaultCCR1) {
-    starting = true;
-    TIM_CCR1(TIM15) = defaultCCR1;
-    TIM_CCR2(TIM15) = defaultCCR2;
-    return;
-    // cnt = 0x80;
-  }
+
 
   if (starting) {
     starting = false;
@@ -80,11 +75,18 @@ void comparator_zc_isr()
     debug2_toggle();
     TIM_CCR1(TIM15) = cnt;
   } else {
-    debug2_toggle();
-    TIM_CCR1(TIM15) = cnt/2;
+    if (cnt < TIM_CCR1(TIM15)) {
+      starting = true;
+      debug0_toggle();
+      debug0_toggle();
+      TIM_CCR1(TIM15) = defaultCCR1;
+    } else {
+      debug2_toggle();
+      TIM_CCR1(TIM15) = cnt/2;
+    }
   }
 
-  TIM_CCR2(TIM15) = TIM_CCR1(TIM15) + TIM_CCR1(TIM15)/4;
+  TIM_CCR2(TIM15) = TIM_CCR1(TIM15) + TIM_CCR1(TIM15)/8;
 
   // TIM_CCR2(TIM15) = 800;
   comparator_zc_isr_disable();
@@ -125,7 +127,7 @@ void start_motor()
   g_bridge_comm_step = BRIDGE_COMM_STEP0;
   comparator_set_state(g_bridge_comm_step);
 
-  bridge_set_run_duty(80);
+  bridge_set_run_duty(100);
   TIM_CR1(TIM15) |= TIM_CR1_CEN; // enable counter
 }
 
@@ -144,7 +146,7 @@ int main()
   bridge_initialize();
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_AUDIO);
-  bridge_set_audio_duty(0x6);
+  bridge_set_audio_duty(0x1);
 
   for (int j = 0; j < 10; j++) {
   bridge_set_audio_frequency(8000);
@@ -171,7 +173,7 @@ int main()
   for (uint8_t i = 0; i < 6; i++) {
     start_motor();
     advance = i;
-    for (uint32_t i = 0; i < 180000; i++) { float a = 0.6*9; }
+    for (uint32_t i = 0; i < 300000; i++) { float a = 0.6*9; }
     stop_motor();
   }
   bridge_disable();
