@@ -16,7 +16,7 @@
 volatile bool starting;
 
 uint32_t zc_confirmations_required = 10;
-const int16_t tim15psc = 5;
+const int16_t tim15psc = 10;
 volatile uint32_t zc_counter;
 volatile uint8_t advance = 0;
 
@@ -29,8 +29,16 @@ const uint16_t defaultCCR2 = defaultCCR1 + defaultCCR1/8;
 
 void tim15_isr() {
   // check tim15 cc1 interrupt
+  if (timer_get_flag(TIM15, TIM_SR_UIF)) {
+
+    debug1_toggle();
+
+    timer_clear_flag(TIM15, TIM_SR_UIF);
+  }
+
   if (timer_get_flag(TIM15, TIM_SR_CC1IF)) {
 
+    debug1_toggle();
     debug1_toggle();
     bridge_commutate();
     comparator_set_state(g_bridge_comm_step + 2);
@@ -64,8 +72,8 @@ void comparator_zc_isr()
     return;
   }
 
-  uint16_t cnt = TIM_CNT(TIM15);
-  TIM_CNT(TIM15) = 0;
+  volatile uint16_t cnt = TIM_CNT(TIM15);
+  TIM_CNT(TIM15) = 1;
 
 
 
@@ -96,7 +104,7 @@ void comparator_zc_isr()
 void commutation_timer_enable_interrupts()
 {
   nvic_enable_irq(NVIC_TIM15_IRQ);
-  TIM_DIER(TIM15) |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
+  TIM_DIER(TIM15) |= TIM_DIER_CC1IE | TIM_DIER_CC2IE | TIM_DIER_UIE;
 }
 
 void commutation_timer_disable_interrupts()
@@ -116,7 +124,7 @@ void start_motor()
   debug0_toggle();
   starting = true;
   TIM_CR1(TIM15) &= ~TIM_CR1_CEN; // disable counter
-  TIM_CNT(TIM15) = 0; // set counter to zero
+  TIM_CNT(TIM15) = 1; // set counter to zero
   TIM_CCR1(TIM15) = defaultCCR1;
   TIM_CCR2(TIM15) = defaultCCR2;
   zc_counter = zc_confirmations_required;
