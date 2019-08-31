@@ -46,13 +46,15 @@ set(CMAKE_EXE_LINKER_FLAGS "${LINKER_FLAGS} ${ARCH_FLAGS}")
 
 include(${BOILERPLATE}/src/target/f/f.cmake)
 
-set(MAIN_SRC
-  src/main.c
-  ${GPIO_SRC}
-  ${RCC_SRC}
-  ${TIMER_SRC}
-  ${USART_SRC}
-)
+if(DEFINED EXAMPLE)
+  set(MAIN_SRC
+    src/example/${EXAMPLE}
+  )
+else()
+  set(MAIN_SRC
+    src/main.c
+  )
+endif()
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/src/hal/inc
@@ -69,6 +71,10 @@ set(COMMON_SRC
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/pwm-input.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/usart.c
   ${PROJECT_SOURCE_DIR}/src/main/src/console.c
+  ${GPIO_SRC}
+  ${RCC_SRC}
+  ${TIMER_SRC}
+  ${USART_SRC}
 )
 
 add_executable(main ${MAIN_SRC} ${COMMON_SRC})

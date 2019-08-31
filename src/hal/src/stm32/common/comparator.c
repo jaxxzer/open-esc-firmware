@@ -72,8 +72,6 @@ void comparator_initialize()
 
 void comparator_set_state(comp_state_e new_state)
 {
-    cm3_assert(new_state <= COMP_STATES);
-
     g_comparator_state = new_state;
     COMP_CSR(COMP1) |= comparator_states[g_comparator_state];
 }
@@ -92,7 +90,9 @@ void comparator_zc_isr_disable()
 
 void comparator_blank(uint32_t nanoseconds)
 {
+    timer_disable_counter(COMPARATOR_BLANK_TIMER);
     comparator_zc_isr_disable();
+    TIM_CNT(COMPARATOR_BLANK_TIMER) = 1;
     timer_set_period(COMPARATOR_BLANK_TIMER, nanoseconds / comparator_blank_tick_period_ns);
     timer_enable_counter(COMPARATOR_BLANK_TIMER);
 }
