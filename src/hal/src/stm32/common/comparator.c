@@ -70,10 +70,8 @@ void comparator_initialize()
 
 void comparator_set_state(comp_state_e new_state)
 {
-    cm3_assert(new_state <= COMP_STATES);
-
-    g_comparator_state = new_state;
-    COMP_CSR(COMP1) |= comparator_states[g_comparator_state];
+    g_comparator_state = new_state%6;
+    COMP_CSR(COMP1) = comparator_states[g_comparator_state];
 }
 
 void comparator_zc_isr_enable()
