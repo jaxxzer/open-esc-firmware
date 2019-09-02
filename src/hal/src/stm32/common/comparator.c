@@ -12,12 +12,12 @@
 #include <target.h>
 
 volatile uint16_t comparator_states[6] = {
-    0x041,
-    0x861,
-    0x061,
-    0x851,
-    0x051,
-    0x841,
+    COMP_CSR_HYST_NO | 0x041,
+    COMP_CSR_HYST_NO | 0x851,
+    COMP_CSR_HYST_NO | 0x061,
+    COMP_CSR_HYST_NO | 0x841,
+    COMP_CSR_HYST_NO | 0x051,
+    COMP_CSR_HYST_NO | 0x861,
 };
 
 uint32_t comparator_blank_tick_period_ns;
@@ -53,8 +53,6 @@ void comparator_initialize()
     gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO0 | GPIO1 | GPIO4 | GPIO5);
 
     rcc_periph_clock_enable(RCC_SYSCFG_COMP);
-
-    comp_select_hyst(1, COMP_CSR_HYST_HIGH);
 
     // enable comparator (there is a startup delay)
     comparator_set_state(COMP_STATE1);
