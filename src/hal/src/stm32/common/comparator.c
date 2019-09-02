@@ -76,14 +76,15 @@ void comparator_set_state(comp_state_e new_state)
 
 void comparator_zc_isr_enable()
 {
-    exti_enable_request(EXTI21);
     nvic_enable_irq(COMPARATOR_ZC_IRQ);
+    exti_enable_request(EXTI21);
 }
 
 void comparator_zc_isr_disable()
 {
     nvic_disable_irq(COMPARATOR_ZC_IRQ);
     exti_disable_request(EXTI21);
+    exti_reset_request(EXTI21);
 }
 
 void comparator_blank(uint32_t nanoseconds)
