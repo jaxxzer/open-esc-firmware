@@ -3,16 +3,32 @@
 #include <console.h>
 #include <pwm-input.h>
 
+#include <libopencm3/stm32/comparator.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
 
 #include <target.h>
 
+const uint16_t comp_checks_required = 5;
+volatile uint16_t comp_checks;
+
 void comparator_zc_isr()
 {
+  while (comp_checks < comp_checks_required) {
+    if (!(COMP_CSR(COMP1) & COMP_CSR_OUT)) {
+      comp_checks = 0;
+      return;
+    } else {
+      comp_checks++;
+    }
+  }
+
+  comp_checks = 0;
+
   // blank for 1ms
-  comparator_blank(1000000);
+  comparator_blank(50000);
+  comparator_set_state(g_comparator_state + 1);
   gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
 }
 
