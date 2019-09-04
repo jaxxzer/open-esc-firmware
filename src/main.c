@@ -15,12 +15,12 @@
 #include <target.h>
 
 // requires at least one compare channel for comparator blanking
-#define COMMUTATION_TIMER TIM15
-#define COMMUTATION_TIMER_RCC RCC_TIM15
-#define COMMUTATION_TIMER_IRQ NVIC_TIM15_IRQ
-#define ZC_TIMER TIM16
-#define ZC_TIMER_RCC RCC_TIM16
-#define ZC_TIMER_IRQ NVIC_TIM16_IRQ
+#define COMMUTATION_TIMER TIM16
+#define COMMUTATION_TIMER_RCC RCC_TIM16
+#define COMMUTATION_TIMER_IRQ NVIC_TIM16_IRQ
+#define ZC_TIMER TIM6
+#define ZC_TIMER_RCC RCC_TIM6
+#define ZC_TIMER_IRQ NVIC_TIM6_DAC_IRQ
 
 // if true, we are in open-loop
 // we wait for the first zero cross period (2 sequential valid zero crosses)
@@ -52,7 +52,7 @@ volatile uint32_t zc_counter; //
 const uint16_t startup_commutation_period_ticks = 5000;
 
 // commutation timer isr
-void tim15_isr() {
+void tim16_isr() {
   if (timer_get_flag(COMMUTATION_TIMER, TIM_SR_UIF)) {
     bridge_commutate();
     comparator_zc_isr_disable();
@@ -64,7 +64,7 @@ void tim15_isr() {
     debug_pins_toggle2();
   }
 
-  // check tim15 cc1 interrupt
+  // check cc1 interrupt
   // ccr1 = comparator blanking period
   if (timer_get_flag(COMMUTATION_TIMER, TIM_SR_CC1IF)) {
     zc_counter = zc_confirmations_required; // remove
@@ -74,7 +74,7 @@ void tim15_isr() {
 }
 
 // zc timer isr
-void tim16_isr() {
+void tim6_isr() {
   // timeout waiting for zero-cross, go to open loop
   // TODO should load commutation timer default values
   if (timer_get_flag(ZC_TIMER, TIM_SR_UIF)) {
