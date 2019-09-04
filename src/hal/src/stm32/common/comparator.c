@@ -11,13 +11,14 @@
 
 #include <target.h>
 
+#define COMP_HYST COMP_CSR_HYST_NO
 volatile uint16_t comparator_states[6] = {
-    COMP_CSR_HYST_NO | 0x041,
-    COMP_CSR_HYST_NO | 0x851,
-    COMP_CSR_HYST_NO | 0x061,
-    COMP_CSR_HYST_NO | 0x841,
-    COMP_CSR_HYST_NO | 0x051,
-    COMP_CSR_HYST_NO | 0x861,
+    COMP_HYST | 0x041,
+    COMP_HYST | 0x851,
+    COMP_HYST | 0x061,
+    COMP_HYST | 0x841,
+    COMP_HYST | 0x051,
+    COMP_HYST | 0x861,
 };
 
 uint32_t comparator_blank_tick_period_ns;
@@ -57,14 +58,15 @@ void comparator_initialize()
     // enable comparator (there is a startup delay)
     comparator_set_state(COMP_STATE1);
 
+    // setup comparator edge interrupt (zero cross)
     exti_set_trigger(EXTI21, EXTI_TRIGGER_BOTH);
 
+    // setup comparator blanking timer, this is not used in normal operation
+    // testing purposes only
     rcc_periph_clock_enable(COMPARATOR_BLANK_TIMER_RCC);
-
     nvic_enable_irq(COMPARATOR_BLANK_IRQ);
     timer_one_shot_mode(COMPARATOR_BLANK_TIMER);
     timer_enable_irq(COMPARATOR_BLANK_TIMER, TIM_DIER_UIE);
-
     comparator_blank_tick_period_ns = 1000000000 / (rcc_ahb_frequency / (TIM_PSC(COMPARATOR_BLANK_TIMER) + 1));
 }
 
