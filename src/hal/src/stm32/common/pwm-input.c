@@ -6,13 +6,21 @@
 
 #include <target.h>
 
-// Must be a high resolution timer!
-#if PWM_INPUT_TIMER != TIM2
- #error PWM_INPUT_TIMER must be a high resolution 32 bit timer
-#endif
-
 static uint16_t psc = 0;
 static uint32_t arr = 0;
+
+void pwm_input_set_counter_frequency(uint32_t new_frequency)
+{
+  psc = (rcc_ahb_frequency / new_frequency) - 1;
+  timer_set_prescaler(PWM_INPUT_TIMER, psc);
+}
+
+// timeout is measured from the rising edge (beginning) of the last valid signal
+// counter frequency must be configured first
+void pwm_input_set_timeout_period_ns(uint32_t new_period)
+{
+  TIM_ARR(PWM_INPUT_TIMER) = new_period / pwm_input_tick_period_ns();
+}
 
 void pwm_input_initialize()
 {
@@ -20,18 +28,21 @@ void pwm_input_initialize()
   gpio_mode_setup(PWM_INPUT_GPIO_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, PWM_INPUT_GPIO_PIN);
   gpio_set_af(PWM_INPUT_GPIO_PORT, PWM_INPUT_GPIO_AF, PWM_INPUT_GPIO_PIN);
 
-  // set timer prescaler so that timer counter runs at 8MHz
-  psc = (rcc_ahb_frequency / 8000000) - 1;
+  rcc_periph_clock_enable(PWM_INPUT_TIMER_RCC); // enable timer clock
+
+  // set timer prescaler so that timer counter runs at 2.5MHz
+  // this provides a ~30ms period
+  pwm_input_set_counter_frequency(2000000);
 
   // arr = period / tick time
-  arr = PERIOD_MAX_NS / pwm_input_tick_period_ns();
+  // TODO setup for update event to invalidate data due to timeout
+  // arr = PERIOD_MAX_NS / pwm_input_tick_period_ns();
+  arr = 0xffff;
 
   // trigger input 1 will:
   // 1. capture the signal period in CCR1 (rising edge - rising edge time)
   // 2. reset the counter (the timer keeps running)
-  rcc_periph_clock_enable(PWM_INPUT_TIMER_RCC); // enable timer clock
   // stretch clock with larger dividers in order to time longer signals without overruns
-  timer_set_prescaler(PWM_INPUT_TIMER, psc);
   timer_set_period(PWM_INPUT_TIMER, arr);                                     // set ARR
   timer_ic_set_input(PWM_INPUT_TIMER, PWM_INPUT_TIMER_IC_ID_RISE, PWM_INPUT_TIMER_IC_TRIGGER); // set both input channels to trigger input 1
   timer_ic_set_input(PWM_INPUT_TIMER, PWM_INPUT_TIMER_IC_ID_FALL, PWM_INPUT_TIMER_IC_TRIGGER);
@@ -48,7 +59,25 @@ void pwm_input_initialize()
   // set slave mode trigger to trigger input 1
   timer_slave_set_trigger(PWM_INPUT_TIMER, PWM_INPUT_TIMER_SLAVE_TRIGGER);
 
+  // disable slave trigger event from setting UIF
+  TIM_CR1(PWM_INPUT_TIMER) |= TIM_CR1_URS;
   timer_enable_counter(PWM_INPUT_TIMER); // set CEN
+}
+
+void pwm_input_set_type(pwm_input_type_t new_type)
+{
+  switch (new_type) {
+    case PWM_INPUT_TYPE_NONE:
+    case PWM_INPUT_TYPE_CONVENTIONAL:
+      pwm_input_set_counter_frequency(2000000);
+      pwm_input_set_timeout_period_ns(25000000);
+      break;
+    default:
+      pwm_input_set_counter_frequency(8000000);
+      pwm_input_set_timeout_period_ns(3000000);
+      break;
+  }
+  g_pwm_type = new_type;
 }
 
 pwm_input_type_t pwm_input_detect_type()
@@ -118,10 +147,10 @@ uint16_t pwm_input_throttle_scale_ns(uint32_t duty_min_ns, uint32_t duty_max_ns)
   }
 
   if (duty > duty_max_ns) {
-    return 0xffff;
+    return 0x800;
   }
 
-  return ((0xffff * (uint64_t)(duty - duty_min_ns))) / ((duty_max_ns - duty_min_ns));
+  return ((0x800 * (uint64_t)(duty - duty_min_ns))) / ((duty_max_ns - duty_min_ns));
 }
 
 uint16_t pwm_input_get_throttle()
@@ -140,4 +169,15 @@ uint16_t pwm_input_get_throttle()
     default:
       return 0;
   }
+}
+
+// TODO handle noise + unexpected signals
+// maybe try enabling internal pulldowns
+bool pwm_input_valid()
+{
+  if (TIM_SR(PWM_INPUT_TIMER) & TIM_SR_UIF) {
+    TIM_SR(PWM_INPUT_TIMER) &= ~TIM_SR_UIF;
+    return false;
+  }
+  return true;
 }
