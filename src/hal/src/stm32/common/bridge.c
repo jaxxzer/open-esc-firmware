@@ -168,6 +168,10 @@ void bridge_set_run_duty(uint16_t duty)
 {
     cm3_assert(g_bridge_state == BRIDGE_STATE_RUN);
 
+    if (duty > 512) {
+        duty = 512; // clamp duty to ~25% max for testing
+    }
+
     g_bridge_run_duty = duty;
     // *(bridge_comm_states[g_bridge_comm_step].pwmChannel) = g_bridge_run_duty;
 }
