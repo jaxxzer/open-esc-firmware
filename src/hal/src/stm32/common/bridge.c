@@ -169,7 +169,7 @@ void bridge_set_run_duty(uint16_t duty)
     cm3_assert(g_bridge_state == BRIDGE_STATE_RUN);
 
     g_bridge_run_duty = duty;
-    *(bridge_comm_states[g_bridge_comm_step].pwmChannel) = g_bridge_run_duty;
+    // *(bridge_comm_states[g_bridge_comm_step].pwmChannel) = g_bridge_run_duty;
 }
 
 void bridge_commutate() {
