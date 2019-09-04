@@ -69,6 +69,7 @@ set(COMMON_SRC
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/pwm-input.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/usart.c
   ${PROJECT_SOURCE_DIR}/src/main/src/console.c
+  ${PROJECT_SOURCE_DIR}/src/main/src/debug-pins.c
 )
 
 add_executable(main ${MAIN_SRC} ${COMMON_SRC})
