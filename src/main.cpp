@@ -309,6 +309,11 @@ int main()
 
   watchdog_start(10); // 10ms watchdog timeout
 
+  // initalize bridge for stspin
+  rcc_periph_clock_enable(RCC_GPIOF);
+  gpio_mode_setup(GPIOF, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO6 | GPIO7);
+  gpio_set(GPIOF, GPIO6 | GPIO7);
+
   bridge_initialize();
 
   // setup adc synchronization
