@@ -36,6 +36,7 @@ set(MAIN_SRC
   ${TARGET_SRC}
   ${TIMER_SRC}
   ${USART_SRC}
+  ${COMPARATOR_SRC}
 )
 
 include_directories(
@@ -53,7 +54,6 @@ set(COMMON_SRC
   ${BOILERPLATE}/lib/libopencm3/lib/stm32/common/iwdg_common_all.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/adc.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/bridge.c
-  ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/comparator.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/global.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/pwm-input.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/usart.c
