@@ -248,6 +248,8 @@ int main()
 
   debug_pins_initialize();
 
+  watchdog_start(1); // 1ms watchdog timeout
+
   bridge_initialize();
 
   // startup beep
@@ -280,6 +282,7 @@ int main()
   pwm_input_type_t pwm_type_check;
 
   while (1) {
+    watchdog_reset();
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
     // cache last pwm input type to compare to current type
     pwm_input_type_t pwm_type_last = pwm_type_check;
@@ -304,7 +307,9 @@ int main()
   // apply pwm input type
   pwm_input_set_type(pwm_type_check);
 
-  while (!pwm_input_valid());
+  while (!pwm_input_valid()) {
+    watchdog_reset();
+  }
 
   // pwm input type valid confirmation beep
   bridge_enable();
@@ -315,7 +320,9 @@ int main()
   bridge_disable();
 
   // wait for low throttle
-  while (pwm_input_get_throttle() > 50);
+  while (pwm_input_get_throttle() > 50) {
+    watchdog_reset();
+  }
 
   // low throttle armed beep
   bridge_enable();
@@ -334,6 +341,7 @@ int main()
   start_motor();
 
   while(1) {
+    watchdog_reset();
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
     //console_write_pwm_info();
     if (pwm_input_valid()) {
