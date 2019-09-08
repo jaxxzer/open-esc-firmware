@@ -2,6 +2,7 @@
 #include <comparator.h>
 #include <console.h>
 #include <pwm-input.h>
+#include <watchdog.h>
 
 #include "main/inc/debug-pins.h"
 
@@ -237,6 +238,13 @@ void system_clock_initialize()
 int main()
 {
   system_clock_initialize();
+
+  rcc_periph_clock_enable(LED_GPIO_RCC);
+  gpio_mode_setup(LED_GPIO_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_GPIO_PIN);
+  for (uint8_t i = 0; i < 10; i++) {
+    gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+    for (uint32_t j = 0; j < 100000; j++) { float a = 0.6*9; }
+  }
 
   debug_pins_initialize();
 
