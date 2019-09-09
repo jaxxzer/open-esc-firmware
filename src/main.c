@@ -273,7 +273,6 @@ int main()
   zc_timer_initialize();
 
   // detect pwm input type
-  console_write("waiting for pwm input...\r\n");
   pwm_input_initialize();
   // successive pwm input type detection checks passed
   uint8_t succeded = 0;
@@ -343,7 +342,6 @@ int main()
   while(1) {
     watchdog_reset();
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
-    //console_write_pwm_info();
     if (pwm_input_valid()) {
       bridge_set_run_duty(g_bridge_run_duty/2 + pwm_input_get_throttle()/2);
     } else {
