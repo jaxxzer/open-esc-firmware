@@ -1,28 +1,29 @@
-Welcome to gsc: the gangster esc!
+Welcome to open-esc: the open esc!
 
-The aim of this project is to produce an ESC that is very high performing, widely applicable, and attractive to manufacture (cost and size optimized).
+The aim of this project is to produce an ESC that is very high performing, widely applicable, and attractive to manufacture.
 
 GSC will run on these target microcontrollers:
 
-- Giga Device GD32 F350 series (108 MHz M4F @ 0.50~1.00$ that's *gangster*!) (in development)
-- STM32 F0 series (in development)
+- Giga Device GD32 F350 series (in development)
+- STM32 F0 series (working!)
 - STM32 F3 series (in development)
-- STM32 G0 series (planned)
-- STM32 G4 series (planned)
-- STSPIN series (planned)
-- Active Semi PAC5523 (anticipated)
+- STM32 G0 series (in development)
+- STM32 G4 series (in development)
+- STSPIN series (in development)
+- Active Semi PAC5523 (in development)
 
-[gsc-hardware](https://github.com/jaxxzer/gsc-hardware) is a repository of hardware designs supported by this firmware.
+[open-esc-hardware](https://github.com/jaxxzer/open-esc-hardware) is a repository of hardware designs supported by this firmware.
 
 To add support for a new hardware, copy one of the exisiting folders in the [target](target) directory and change the pin defitions.
 
 Current functionality:
-- automatic input signal detection (pwm, oneshot125/42, multishot, dshot, proshot)
+- automatic input signal detection (pwm, oneshot125/42, multishot)
 - audio
 - open-loop sine-modulated pwm
+- closed-loop comparator based commutation
 
 Project roadmap:
-- Closed-loop comparator based commutation
+- dshot, proshot
 - Closed-loop adc based commutation
 - Support for dshot commands
 - Save/store settings
