@@ -35,7 +35,7 @@ Project roadmap:
 - Support for PAC5523
 - Switch from stm32-lib to STM LL, libopencm3 or bare-metal
 
-To build the main application for the selected [target board](src/target) (the default board is `gsc`):
+To build the main application for the selected [target board](src/target) (the default board is `wraith32`):
 ```sh
 mkdir -p build
 cd build
