@@ -248,7 +248,7 @@ int main()
 
   debug_pins_initialize();
 
-  watchdog_start(1); // 1ms watchdog timeout
+  watchdog_start(10); // 10ms watchdog timeout
 
   bridge_initialize();
 
@@ -257,13 +257,13 @@ int main()
   bridge_set_state(BRIDGE_STATE_AUDIO);
   bridge_set_audio_duty(0xf);
   bridge_set_audio_frequency(1000);
-  for (uint32_t i = 0; i < 90000; i++) { float a = 0.6*9; }
+  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); }
   bridge_set_audio_frequency(1200);
-  for (uint32_t i = 0; i < 90000; i++) { float a = 0.6*9; }
+  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); }
   bridge_set_audio_frequency(1600);
-  for (uint32_t i = 0; i < 90000; i++) { float a = 0.6*9; }
+  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); }
   bridge_disable();
-  for (int i = 0; i < 9999; i++) { float a = 0.6*9; }
+  for (int i = 0; i < 9999; i++) { watchdog_reset(); }
 
   // initialize comparator
   comparator_initialize();
