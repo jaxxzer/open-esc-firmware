@@ -28,28 +28,9 @@ volatile uint16_t comparator_states[6] = {
 
 uint32_t comparator_blank_tick_period_ns;
 
-// TODO move nvic isrs to target directory
-
-// linked for f0
-void adc_comp_isr() {
-    comparator_zc_isr(); // user code
-    exti_reset_request(EXTI21);
-}
-
-// linked for f3
-void comp123_isr() {
-    comparator_zc_isr();
-    exti_reset_request(EXTI21);
-}
-
 void comparator_blank_complete_isr()
 {
     comparator_zc_isr_enable();
-}
-
-void tim17_isr() {
-    comparator_blank_complete_isr();
-    timer_clear_flag(TIM17, TIM_SR_UIF);
 }
 
 void comparator_initialize()
