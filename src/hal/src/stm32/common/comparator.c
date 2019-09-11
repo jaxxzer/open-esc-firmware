@@ -11,7 +11,12 @@
 
 #include <target.h>
 
-#define COMP_HYST COMP_CSR_HYST_NO
+#if defined(STM32F0)
+ #define COMP_HYST COMP_CSR_HYST_NO
+#elif defined(STM32F3)
+ #define COMP_HYST COMP_CSR_HYST_NONE
+#endif
+
 volatile uint16_t comparator_states[6] = {
     COMP_HYST | 0x041,
     COMP_HYST | 0x851,
@@ -53,7 +58,13 @@ void comparator_initialize()
 
     gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO0 | GPIO1 | GPIO4 | GPIO5);
 
+#if defined(STM32F3)
+    rcc_periph_clock_enable(RCC_SYSCFG);
+#elif defined(STM32F0)
     rcc_periph_clock_enable(RCC_SYSCFG_COMP);
+#else
+ #error
+#endif
 
     // enable comparator (there is a startup delay)
     comparator_set_state(COMP_STATE1);
