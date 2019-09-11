@@ -50,6 +50,7 @@ set(MAIN_SRC
   src/main.c
   ${COMP_SRC}
   ${GPIO_SRC}
+  ${ISR_SRC}
   ${RCC_SRC}
   ${TIMER_SRC}
   ${USART_SRC}
