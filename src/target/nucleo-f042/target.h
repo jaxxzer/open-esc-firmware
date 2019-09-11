@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../inc/stm32/f0/target.h"
+
 #define LED_GPIO_RCC RCC_GPIOB
 #define LED_GPIO_PORT GPIOB
 #define LED_GPIO_PIN GPIO3
