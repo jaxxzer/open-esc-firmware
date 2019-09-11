@@ -225,6 +225,20 @@ void zc_timer_initialize()
   nvic_set_priority(ZC_TIMER_IRQ, 0x40);
 }
 
+// for test
+void test_spin()
+{
+  bridge_enable();
+  bridge_set_state(BRIDGE_STATE_RUN);
+  bridge_set_run_duty(200);
+  start_motor();
+  for (uint32_t i = 0; i < 400000; i++) { watchdog_reset(); }
+  bridge_disable();
+  stop_motor();
+
+  while(1) {watchdog_reset();}
+}
+
 // TODO move to hal
 void system_clock_initialize()
 {
