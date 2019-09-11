@@ -2,6 +2,7 @@
 #include <comparator.h>
 #include <console.h>
 #include <debug-pins.h>
+#include <isr.h>
 #include <pwm-input.h>
 #include <watchdog.h>
 
@@ -13,14 +14,6 @@
 #include <libopencm3/stm32/timer.h>
 
 #include <target.h>
-
-// requires at least one compare channel for comparator blanking
-#define COMMUTATION_TIMER TIM16
-#define COMMUTATION_TIMER_RCC RCC_TIM16
-#define COMMUTATION_TIMER_IRQ NVIC_TIM16_IRQ
-#define ZC_TIMER TIM6
-#define ZC_TIMER_RCC RCC_TIM6
-#define ZC_TIMER_IRQ NVIC_TIM6_DAC_IRQ
 
 // if true, we are in open-loop
 // we wait for the first zero cross period (2 sequential valid zero crosses)
@@ -49,41 +42,33 @@ volatile uint32_t zc_counter; //
 
 // open loop startup commutation timer ARR value
 // TODO do this in human-readable time (microseconds) 
-const uint16_t startup_commutation_period_ticks = 5000;
+const uint16_t startup_commutation_period_ticks = 10000;
 
-// commutation timer isr
-void tim16_isr() {
-  if (timer_get_flag(COMMUTATION_TIMER, TIM_SR_UIF)) {
+void commutation_isr()
+{
     bridge_commutate();
     comparator_zc_isr_disable();
 
     zc_counter = zc_confirmations_required; // remove
     // TODO rotate table to get this right
     comparator_set_state(g_bridge_comm_step + 2);
-    timer_clear_flag(COMMUTATION_TIMER, TIM_SR_UIF);
     debug_pins_toggle2();
-  }
+}
 
-  // check cc1 interrupt
-  // ccr1 = comparator blanking period
-  if (timer_get_flag(COMMUTATION_TIMER, TIM_SR_CC1IF)) {
-    zc_counter = zc_confirmations_required; // remove
-    comparator_zc_isr_enable();
-    timer_clear_flag(COMMUTATION_TIMER, TIM_SR_CC1IF);
-  }
+void comparator_unblank_isr()
+{
+  zc_counter = zc_confirmations_required; // remove
+  comparator_zc_isr_enable();
 }
 
 // zc timer isr
-void tim6_isr() {
+void comparator_zc_timeout_isr() {
   // timeout waiting for zero-cross, go to open loop
   // TODO should load commutation timer default values
-  if (timer_get_flag(ZC_TIMER, TIM_SR_UIF)) {
-    starting = true;
-    zc_counter = zc_confirmations_required; // remove
-    timer_clear_flag(ZC_TIMER, TIM_SR_UIF);
-    debug_pins_toggle2();
-    debug_pins_toggle2();
-  }
+  starting = true;
+  zc_counter = zc_confirmations_required; // remove
+  debug_pins_toggle2();
+  debug_pins_toggle2();
 }
 
 void comparator_zc_isr()
