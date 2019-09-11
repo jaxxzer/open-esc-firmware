@@ -268,7 +268,7 @@ int main()
   // startup beep
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_AUDIO);
-  bridge_set_audio_duty(0xf);
+  bridge_set_audio_duty(0x4);
   bridge_set_audio_frequency(1000);
   for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); }
   bridge_set_audio_frequency(1200);
