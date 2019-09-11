@@ -1,10 +1,9 @@
 #include <bridge.h>
 #include <comparator.h>
 #include <console.h>
+#include <debug-pins.h>
 #include <pwm-input.h>
 #include <watchdog.h>
-
-#include "main/inc/debug-pins.h"
 
 #include <libopencm3/cm3/vector.h>
 #include <libopencm3/cm3/nvic.h>
