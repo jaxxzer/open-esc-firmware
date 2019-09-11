@@ -48,6 +48,7 @@ include(${BOILERPLATE}/src/target/f/f.cmake)
 
 set(MAIN_SRC
   src/main.c
+  ${COMP_SRC}
   ${GPIO_SRC}
   ${RCC_SRC}
   ${TIMER_SRC}
@@ -64,7 +65,6 @@ set(COMMON_SRC
   ${BOILERPLATE}/lib/libopencm3/lib/cm3/vector.c
   ${BOILERPLATE}/lib/libopencm3/lib/stm32/common/exti_common_all.c
   ${BOILERPLATE}/lib/libopencm3/lib/stm32/common/iwdg_common_all.c
-  ${BOILERPLATE}/lib/libopencm3/lib/stm32/f0/comparator.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/bridge.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/comparator.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/pwm-input.c
