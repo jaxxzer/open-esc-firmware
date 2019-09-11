@@ -13,30 +13,7 @@ set(LINKER_FLAGS "-nostartfiles -specs=nano.specs -specs=nosys.specs --static -g
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# target board
-if(NOT DEFINED TARGET_BOARD)
-  set(TARGET_BOARD "gsc")
-  message("no TARGET_BOARD defined, using ${TARGET_BOARD}")
-endif()
-
-# target board directory
-set(TARGET_DIR "${PROJECT_SOURCE_DIR}/src/target/${TARGET_BOARD}")
-
-# include target board CMakeLists
-include(${TARGET_DIR}/CMakeLists.txt)
-
-# include target board defintions
-include_directories(${TARGET_DIR})
-
-# target part
-# TODO fail if not set
-message("TARGET_MCU: ${TARGET_MCU}")
-
-include(${BOILERPLATE}/src/target-mcu.cmake)
-
-# target architecture
-# TODO fail if not set
-message("TARGET_CPU: ${TARGET_CPU}")
+include(src/target/target.cmake)
 
 include_directories(${BOILERPLATE}/lib/libopencm3/include)
 
