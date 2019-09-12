@@ -1,0 +1,21 @@
+dist: xenial
+
+language: minimal
+
+script:
+- tools/travis-ci-script.sh || travis_terminate 1
+
+before_deploy:
+  - git tag continuous-deployment -f
+  - git remote set-url origin https://${GITHUB_TOKEN}@github.com/jaxxzer/open-esc-firmware
+  - git push origin continuous-deployment -f
+
+deploy:
+  provider: releases
+  api_key: ${GITHUB_TOKEN}
+  file_glob: true
+  file: build/bin/*.hex
+  overwrite: true
+  skip_cleanup: true
+  on:
+    branch: master
