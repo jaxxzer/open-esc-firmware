@@ -52,14 +52,17 @@ set(COMMON_SRC
   ${PROJECT_SOURCE_DIR}/src/main/src/debug-pins.c
 )
 
-add_executable(main ${MAIN_SRC} ${COMMON_SRC})
+set(EXE_NAME open-esc-${TARGET_BOARD})
+add_executable(${EXE_NAME} ${MAIN_SRC} ${COMMON_SRC})
 
 # TODO how to make clean?
-add_custom_command(TARGET main POST_BUILD
-  COMMAND cp ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/main debug.elf
+add_custom_command(TARGET ${EXE_NAME} POST_BUILD
+  COMMAND arm-none-eabi-objcopy -O ihex ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${EXE_NAME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${EXE_NAME}.hex
+  COMMAND arm-none-eabi-size ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${EXE_NAME}
+  COMMAND cp ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${EXE_NAME} debug.elf
 )
 
-add_custom_command(TARGET main PRE_LINK
+add_custom_command(TARGET ${EXE_NAME} PRE_LINK
   COMMAND python ${BOILERPLATE}/src/link/generate-ldscript.py -p ${TARGET_MCU} > ${BOILERPLATE}/src/link/stm32-mem.ld
 )
 
@@ -68,5 +71,5 @@ add_custom_target(flash
   # try stlink v2 first, then stlink v2-1 if that fails
   openocd -f interface/stlink-v2.cfg -f ${OPENOCD_TARGET} -c "program debug.elf verify reset exit" ||
   openocd -f interface/stlink-v2-1.cfg -f ${OPENOCD_TARGET} -c "program debug.elf verify reset exit"
-  DEPENDS main
+  DEPENDS ${EXE_NAME}
 )
