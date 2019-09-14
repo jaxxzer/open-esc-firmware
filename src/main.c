@@ -246,7 +246,14 @@ int main()
 
   debug_pins_initialize();
 
+  console_initialize();
+  console_write("welcome to open-esc!\r\n");
+  for (uint32_t j = 0; j < 1000000; j++) { float a = 0.6*9; }
+
+
   watchdog_start(10); // 10ms watchdog timeout
+
+  console_write("initializing...\r\n");
 
   bridge_initialize();
 
@@ -275,8 +282,10 @@ int main()
   // successive pwm input type detection checks passed
   uint8_t succeded = 0;
   // successive pwm input type detection checks needed
-  const uint8_t succeded_needed = 20;
+  const uint8_t succeded_needed = 3;
   pwm_input_type_t pwm_type_check;
+
+  console_write("waiting for pwm signal...\r\n");
 
   while (1) {
     watchdog_reset();
@@ -313,20 +322,24 @@ int main()
   bridge_set_state(BRIDGE_STATE_AUDIO);
   bridge_set_audio_duty(0xf);
   bridge_set_audio_frequency(1000);
-  for (uint32_t i = 0; i < 180000; i++) { float a = 0.6*9; }
+  for (uint32_t i = 0; i < 180000; i++) { watchdog_reset(); }
   bridge_disable();
 
+  console_write_pwm_info();
+  console_write("waiting for low throttle...\r\n");
   // wait for low throttle
   while (pwm_input_get_throttle() > 50) {
     watchdog_reset();
   }
+
+  console_write("armed!\r\n");
 
   // low throttle armed beep
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_AUDIO);
   bridge_set_audio_duty(0xf);
   bridge_set_audio_frequency(1600);
-  for (uint32_t i = 0; i < 180000; i++) { float a = 0.6*9; }
+  for (uint32_t i = 0; i < 180000; i++) { watchdog_reset(); }
   bridge_disable();
 
   // prepare the motor for run mode (armed)
@@ -340,6 +353,7 @@ int main()
   while(1) {
     watchdog_reset();
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+    console_write_pwm_info();
     if (pwm_input_valid()) {
       bridge_set_run_duty(g_bridge_run_duty/2 + pwm_input_get_throttle()/2);
     } else {
@@ -351,5 +365,9 @@ int main()
   bridge_disable();
   // stop commutation and zc timers
   stop_motor();
+
+  console_write("disarmed!\r\n");
+
+  // independent watchdog will issue a system reset
   while (1);
 }
