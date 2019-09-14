@@ -26,6 +26,7 @@ include(${BOILERPLATE}/src/target/f/f.cmake)
 set(MAIN_SRC
   src/main.c
   ${COMP_SRC}
+  ${DMA_SRC}
   ${GPIO_SRC}
   ${ISR_SRC}
   ${RCC_SRC}
