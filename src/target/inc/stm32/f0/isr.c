@@ -1,8 +1,10 @@
 
 #include <isr.h>
 
+#include <libopencm3/stm32/dma.h>
 #include <libopencm3/stm32/exti.h>
 #include <libopencm3/stm32/timer.h>
+#include <libopencm3/stm32/usart.h>
 
 #include <target.h>
 
@@ -42,4 +44,16 @@ void tim16_isr()
 void tim17_isr() {
     comparator_blank_complete_isr();
     timer_clear_flag(TIM17, TIM_SR_UIF);
+}
+
+void dma1_channel4_7_dma2_channel3_5_isr() {
+    usart_dma_transfer_complete_isr(CONSOLE_USART);
+    // clear isr flag
+    DMA_IFCR(CONSOLE_TX_DMA) |= DMA_IFCR_CTCIF(CONSOLE_TX_DMA_CHANNEL);
+}
+
+void dma1_channel2_3_dma2_channel1_2_isr() {
+    usart_dma_transfer_complete_isr(CONSOLE_USART);
+    // clear isr flag
+    DMA_IFCR(CONSOLE_TX_DMA) |= DMA_IFCR_CTCIF(CONSOLE_TX_DMA_CHANNEL);
 }
