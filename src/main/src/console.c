@@ -9,6 +9,8 @@
 #include <usart.h>
 #include <pwm-input.h>
 
+#include <stdio.h>
+
 void console_initialize() {
     rcc_periph_clock_enable(CONSOLE_TX_GPIO_RCC);
 
@@ -18,13 +20,12 @@ void console_initialize() {
 
     rcc_periph_clock_enable(CONSOLE_USART_RCC);
 
-    // higher clock speed setup necessary for faster baudrates
-    usart_initialize(CONSOLE_USART, 9600);
+    usart_initialize(CONSOLE_USART, 1000000);
 }
 
 void console_write(const char* string)
 {
-   usart_write(CONSOLE_USART, string);
+   usart_write_string(CONSOLE_USART, string);
 }
 
 void console_write_int(const uint32_t i)
@@ -32,14 +33,23 @@ void console_write_int(const uint32_t i)
     usart_write_int(CONSOLE_USART, i);
 }
 
+const char* pwm_type_names[6] =
+{
+    [PWM_INPUT_TYPE_NONE] = "none",
+    [PWM_INPUT_TYPE_CONVENTIONAL] = "conventional",
+    [PWM_INPUT_TYPE_ONESHOT125] = "oneshot125",
+    [PWM_INPUT_TYPE_ONESHOT42] = "oneshot42",
+    [PWM_INPUT_TYPE_MULTISHOT] = "multishot",
+    [PWM_INPUT_TYPE_UNKNOWN] = "unknown",
+};
+
 void console_write_pwm_info()
 {
-    console_write_int(g_pwm_type);
-    console_write("\tthrottle: ");
-    console_write_int(pwm_input_get_throttle());
-    console_write("\tduty: ");
-    console_write_int(pwm_input_get_duty_ns());
-    console_write("\tperiod: ");
-    console_write_int(pwm_input_get_period_ns());
-    console_write("\r\n");
+    char buffer[100];
+    uint8_t size = snprintf(buffer, 100, "pwm type: %s\tthrottle: %d\tduty (ns): %d\tperiod (ns): %d\r\n",
+        pwm_type_names[g_pwm_type],
+        pwm_input_get_throttle(),
+        pwm_input_get_duty_ns(),
+        pwm_input_get_period_ns());
+    usart_write(USART1, buffer, size);
 }
