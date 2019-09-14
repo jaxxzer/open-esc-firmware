@@ -73,7 +73,7 @@ void pwm_input_set_type(pwm_input_type_t new_type)
       pwm_input_set_timeout_period_ns(25000000);
       break;
     default:
-      pwm_input_set_counter_frequency(8000000);
+      pwm_input_set_counter_frequency(48000000);
       pwm_input_set_timeout_period_ns(3000000);
       break;
   }
