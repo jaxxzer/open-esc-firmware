@@ -53,6 +53,8 @@ void comparator_initialize()
     // setup comparator edge interrupt (zero cross)
     exti_set_trigger(EXTI21, EXTI_TRIGGER_BOTH);
 
+    nvic_enable_irq(COMPARATOR_ZC_IRQ);
+
     // setup comparator blanking timer, this is not used in normal operation
     // testing purposes only
     rcc_periph_clock_enable(COMPARATOR_BLANK_TIMER_RCC);
@@ -72,14 +74,11 @@ void comparator_zc_isr_enable()
 {
     exti_reset_request(EXTI21);
     exti_enable_request(EXTI21);
-    nvic_enable_irq(COMPARATOR_ZC_IRQ);
 }
 
 void comparator_zc_isr_disable()
 {
-    nvic_disable_irq(COMPARATOR_ZC_IRQ);
     exti_disable_request(EXTI21);
-    exti_reset_request(EXTI21);
 }
 
 void comparator_blank(uint32_t nanoseconds)
