@@ -1,6 +1,8 @@
 
+#include <adc.h>
 #include <isr.h>
 
+#include <libopencm3/stm32/adc.h>
 #include <libopencm3/stm32/dma.h>
 #include <libopencm3/stm32/exti.h>
 #include <libopencm3/stm32/timer.h>
@@ -24,6 +26,10 @@ void adc_comp_isr()
     comparator_zc_isr(); // user code
     exti_reset_request(EXTI21);
   }
+  if (adc_get_watchdog_flag(ADC1)) {
+    overcurrent_watchdog_isr();
+    adc_clear_watchdog_flag(ADC1);
+  }
 }
 
 void tim16_isr()
@@ -44,6 +50,13 @@ void tim16_isr()
 void tim17_isr() {
     comparator_blank_complete_isr();
     timer_clear_flag(TIM17, TIM_SR_UIF);
+}
+
+void tim1_cc_isr() {
+  if (timer_get_flag(TIM1, TIM_SR_CC4IF)) {
+    adc_start();
+    timer_clear_flag(TIM1, TIM_SR_CC4IF);
+  }
 }
 
 void dma1_channel4_7_dma2_channel3_5_isr() {

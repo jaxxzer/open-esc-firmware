@@ -7,6 +7,8 @@ endif()
 # target board directory
 set(TARGET_DIR "${PROJECT_SOURCE_DIR}/src/target")
 
+set(TARGET_SRC ${TARGET_DIR}/${TARGET_BOARD}/target.c)
+
 # include target board CMakeLists
 include(${TARGET_DIR}/${TARGET_BOARD}/target-mcu.cmake)
 
