@@ -82,6 +82,7 @@ void bridge_initialize()
     
     timer_set_prescaler(TIM1, 0);
     timer_set_period(TIM1, 2048);
+    TIM1_CCR4 = 1024;
     timer_set_oc_value(TIM1, TIM_OC1, 0);
     timer_set_oc_value(TIM1, TIM_OC2, 0);
     timer_set_oc_value(TIM1, TIM_OC3, 0);
@@ -91,6 +92,7 @@ void bridge_initialize()
     timer_enable_oc_preload(TIM1, TIM_OC1);
     timer_enable_oc_preload(TIM1, TIM_OC2);
     timer_enable_oc_preload(TIM1, TIM_OC3);
+    timer_enable_oc_preload(TIM1, TIM_OC4);
     timer_enable_oc_output(TIM1, TIM_OC1);
     timer_enable_oc_output(TIM1, TIM_OC1N);
     timer_enable_oc_output(TIM1, TIM_OC2);
@@ -118,13 +120,15 @@ void bridge_set_state(bridge_state_e new_state)
         break;
     case BRIDGE_STATE_AUDIO:
         bridge_set_audio_duty(0);
-        TIM1_ARR = 127;
+        TIM1_ARR = 0xff;
+        TIM1_CCR4 = 0x80; // synchronize adc between pwms
         g_bridge_state = BRIDGE_STATE_AUDIO;
         break;
     case BRIDGE_STATE_RUN:
         bridge_set_run_duty(0);
-        TIM1_PSC = 0;
+        TIM1_PSC = 1;
         TIM1_ARR = 2047;
+        TIM1_CCR4 = 1500;
         g_bridge_state = BRIDGE_STATE_RUN;
         break;
     default:
@@ -170,6 +174,12 @@ void bridge_set_run_duty(uint16_t duty)
 
     if (duty > 512) {
         duty = 512; // clamp duty to ~25% max for testing
+    }
+
+    if (duty > 0x400) {
+        TIM1_CCR4 = 0x200;
+    } else {
+        TIM1_CCR4 = 0x600;
     }
 
     g_bridge_run_duty = duty;
