@@ -15,9 +15,9 @@
 // do not change, implementation takes advantage of integer overflow
 const uint16_t _tx_buffer_size = 256;
 static uint8_t _tx_buffer[256];
-static uint8_t _tx_head;
-static uint8_t _tx_tail;
-static uint8_t _dma_transfer_count;
+volatile uint8_t _tx_head;
+volatile uint8_t _tx_tail;
+volatile uint8_t _dma_transfer_count;
 
 void usart_setup_dma_tx(uint32_t usart)
 {
@@ -27,6 +27,7 @@ void usart_setup_dma_tx(uint32_t usart)
     dma_set_memory_size(CONSOLE_TX_DMA, CONSOLE_TX_DMA_CHANNEL, DMA_CCR_MSIZE_8BIT);              // set MSIZE
     dma_set_peripheral_size(CONSOLE_TX_DMA, CONSOLE_TX_DMA_CHANNEL, DMA_CCR_PSIZE_16BIT);          // set PSIZE
     dma_enable_memory_increment_mode(CONSOLE_TX_DMA, CONSOLE_TX_DMA_CHANNEL);                      // set MINC
+    dma_set_priority(DMA1, DMA_CHANNEL1, DMA_CCR_PL_LOW);
 
     USART_CR3(usart) |= USART_CR3_DMAT;
     DMA_CCR(CONSOLE_TX_DMA, CONSOLE_TX_DMA_CHANNEL) |= DMA_CCR_TCIE;
