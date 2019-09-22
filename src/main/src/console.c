@@ -6,6 +6,7 @@
 
 #include <target.h>
 
+#include <adc.h>
 #include <usart.h>
 #include <pwm-input.h>
 
@@ -51,5 +52,19 @@ void console_write_pwm_info()
         pwm_input_get_throttle(),
         pwm_input_get_duty_ns(),
         pwm_input_get_period_ns());
-    usart_write(USART1, buffer, size);
+    usart_write(CONSOLE_USART, buffer, size);
+}
+
+void console_write_adc_info()
+{
+    char buffer[120];
+    uint8_t size = snprintf(buffer, 120, "temperature: %d\tbus voltage: %d\tbus current: %d\tA: %d\tB: %d\tC: %d\tN: %d\r\n",
+        adc_read_channel(ADC_IDX_TEMPERATURE),
+        adc_read_channel(ADC_IDX_BUS_VOLTAGE),
+        adc_read_channel(ADC_IDX_BUS_CURRENT),
+        adc_read_channel(ADC_IDX_PHASEA_VOLTAGE),
+        adc_read_channel(ADC_IDX_PHASEB_VOLTAGE),
+        adc_read_channel(ADC_IDX_PHASEC_VOLTAGE),
+        adc_read_channel(ADC_IDX_NEUTRAL_VOLTAGE));
+    usart_write(CONSOLE_USART, buffer, size);
 }

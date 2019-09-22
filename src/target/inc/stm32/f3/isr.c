@@ -1,5 +1,7 @@
+#include <adc.h>
 #include <isr.h>
 
+#include <libopencm3/stm32/adc.h>
 #include <libopencm3/stm32/dma.h>
 #include <libopencm3/stm32/exti.h>
 #include <libopencm3/stm32/timer.h>
@@ -46,7 +48,23 @@ void tim1_trg_com_tim17_isr() {
 }
 
 void dma1_channel7_isr() {
+  if (DMA_ISR(CONSOLE_TX_DMA) & DMA_ISR_TCIF(CONSOLE_TX_DMA_CHANNEL)) {
     usart_dma_transfer_complete_isr(CONSOLE_USART);
     // clear isr flag
     DMA_IFCR(CONSOLE_TX_DMA) |= DMA_IFCR_CTCIF(CONSOLE_TX_DMA_CHANNEL);
+  }
+}
+
+void adc1_2_isr() {
+  if (ADC_ISR(ADC1) & ADC_ISR_AWD1) {
+    overcurrent_watchdog_isr();
+    ADC_ISR(ADC1) = ADC_ISR_AWD1;
+  }
+}
+
+void tim1_cc_isr() {
+  if (timer_get_flag(TIM1, TIM_SR_CC4IF)) {
+    adc_start();
+    timer_clear_flag(TIM1, TIM_SR_CC4IF);
+  }
 }
