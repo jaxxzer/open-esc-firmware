@@ -4,3 +4,6 @@
 [submodule "lib/stm32-boilerplate"]
 	path = lib/stm32-boilerplate
 	url = https://github.com/jaxxzer/stm32-boilerplate
+[submodule "lib/ping-cpp"]
+	path = lib/ping-cpp
+	url = https://github.com/jaxxzer/ping-cpp
