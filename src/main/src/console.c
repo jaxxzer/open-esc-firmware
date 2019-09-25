@@ -19,6 +19,12 @@ void console_initialize() {
 
     gpio_set_af(CONSOLE_TX_GPIO_PORT, CONSOLE_TX_GPIO_AF, CONSOLE_TX_GPIO_PIN);
 
+    rcc_periph_clock_enable(CONSOLE_RX_GPIO_RCC);
+
+    gpio_mode_setup(CONSOLE_RX_GPIO_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, CONSOLE_RX_GPIO_PIN);
+
+    gpio_set_af(CONSOLE_RX_GPIO_PORT, CONSOLE_RX_GPIO_AF, CONSOLE_RX_GPIO_PIN);
+
     rcc_periph_clock_enable(CONSOLE_USART_RCC);
 
     usart_initialize(CONSOLE_USART, 1000000);
