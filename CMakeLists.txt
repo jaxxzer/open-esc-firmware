@@ -8,6 +8,7 @@ set(BOILERPLATE ${PROJECT_SOURCE_DIR}/lib/stm32-boilerplate)
 set(LIBOPENCM3 ${BOILERPLATE}/lib/libopencm3)
 set(LIBOPENCM3_SRC ${LIBOPENCM3}/lib/stm32)
 
+set(COMPILER_CXX_FLAGS "-fno-use-cxa-atexit")
 set(COMPILER_FLAGS "-fdata-sections -ffunction-sections -O0 -DNDEBUG -Werror")
 set(LINKER_FLAGS "-nostartfiles -specs=nano.specs -specs=nosys.specs --static -ggdb3 -Wl,--gc-sections -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group -Wl,-Map=output.map -T ${BOILERPLATE}/src/link/stm32-mem.ld -L ${BOILERPLATE}/lib/libopencm3/lib")
 set(CMAKE_BUILD_TYPE Debug)
@@ -18,7 +19,7 @@ include(src/target/target.cmake)
 include_directories(${BOILERPLATE}/lib/libopencm3/include)
 
 set(CMAKE_C_FLAGS "${COMPILER_FLAGS} ${ARCH_FLAGS}")
-set(CMAKE_CXX_FLAGS "${COMPILER_FLAGS} ${ARCH_FLAGS}")
+set(CMAKE_CXX_FLAGS "${COMPILER_CXX_FLAGS} ${COMPILER_FLAGS} ${ARCH_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${LINKER_FLAGS} ${ARCH_FLAGS}")
 
 include(${BOILERPLATE}/src/target/f/f.cmake)
