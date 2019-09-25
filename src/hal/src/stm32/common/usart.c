@@ -19,6 +19,28 @@ volatile uint8_t _tx_head;
 volatile uint8_t _tx_tail;
 volatile uint8_t _dma_transfer_count;
 
+const uint16_t _rx_buffer_size = 256;
+static uint8_t _rx_buffer[256];
+volatile uint8_t _rx_head;
+volatile uint8_t _rx_tail;
+
+void usart_setup_dma_rx(uint32_t usart)
+{
+    rcc_periph_clock_enable(CONSOLE_RX_DMA_RCC);                                            // enable dma clock
+    DMA_CPAR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) = (uint32_t)&USART_RDR(usart); // set CPAR
+    dma_set_read_from_peripheral(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL);                              // set DIR
+    dma_set_memory_size(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL, DMA_CCR_MSIZE_8BIT);              // set MSIZE
+    dma_set_peripheral_size(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL, DMA_CCR_PSIZE_16BIT);          // set PSIZE
+    dma_enable_memory_increment_mode(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL);                      // set MINC
+    dma_set_priority(DMA1, DMA_CHANNEL1, DMA_CCR_PL_VERY_HIGH);
+
+    DMA_CCR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) |= DMA_CCR_CIRC;
+    DMA_CNDTR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) = 255;
+    DMA_CMAR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) = (uint32_t)(_rx_buffer);
+    USART_CR3(usart) |= USART_CR3_DMAR;
+    DMA_CCR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) |= DMA_CCR_EN;
+}
+
 void usart_setup_dma_tx(uint32_t usart)
 {
     rcc_periph_clock_enable(CONSOLE_TX_DMA_RCC);                                            // enable dma clock
@@ -45,6 +67,27 @@ void usart_initialize(uint32_t usart, uint32_t baudrate)
     usart_enable(usart);
 
     usart_setup_dma_tx(usart);
+    usart_setup_dma_rx(usart);
+}
+
+uint16_t usart_read(uint32_t usart, char* byte, uint16_t length) {
+    uint16_t i = 0;
+
+    uint16_t read_bytes = usart_rx_waiting();
+
+    if (length < read_bytes) {
+        read_bytes = length;
+    }
+
+    while(i++ < read_bytes) {
+      *byte++ = _rx_buffer[_rx_head++];
+    }
+
+    return read_bytes;
+}
+
+uint8_t usart_rx_waiting() {
+    return 0xff - DMA_CNDTR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) - _rx_head;
 }
 
 // how many bytes are waiting to be shifted out
