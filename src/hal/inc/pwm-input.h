@@ -22,7 +22,7 @@ typedef enum {
     PWM_INPUT_TYPE_UNKNOWN,
 } pwm_input_type_t;
 
-pwm_input_type_t g_pwm_type;
+extern pwm_input_type_t g_pwm_type;
 
 void pwm_input_initialize();
 void pwm_input_deinitialize();

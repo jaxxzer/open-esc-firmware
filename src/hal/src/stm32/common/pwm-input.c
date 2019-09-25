@@ -6,6 +6,8 @@
 
 #include <target.h>
 
+pwm_input_type_t g_pwm_type;
+
 static uint16_t psc = 0;
 static uint32_t arr = 0;
 
