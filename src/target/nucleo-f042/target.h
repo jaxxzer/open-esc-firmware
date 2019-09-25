@@ -112,4 +112,4 @@
 // adc threshold for current channel
 #define ADC_WWDG_CURRENT_MAX 400
 
-uint8_t adc_channels[7];
+extern uint8_t adc_channels[7];
