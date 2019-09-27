@@ -54,7 +54,7 @@ void commutation_isr()
 
     zc_counter = zc_confirmations_required; // remove
     // TODO rotate table to get this right
-    comparator_set_state(g_bridge_comm_step + 2);
+    comparator_set_state((comp_state_e)(g_bridge_comm_step + 2));
     debug_pins_toggle2();
 }
 
@@ -179,7 +179,7 @@ void start_motor()
   zc_counter = zc_confirmations_required;
 
   g_bridge_comm_step = BRIDGE_COMM_STEP0;
-  comparator_set_state(g_bridge_comm_step);
+  comparator_set_state((comp_state_e)g_bridge_comm_step);
 
   commutation_timer_enable_interrupts();
   zc_timer_enable_interrupts();
