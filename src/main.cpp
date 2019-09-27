@@ -10,6 +10,9 @@ extern "C" {
 #include <watchdog.h>
 }
 
+// hpp
+#include <io.h>
+
 #include <libopencm3/cm3/vector.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/adc.h>
@@ -324,6 +327,10 @@ int main()
 
   while (1) {
     watchdog_reset();
+
+    io_write_state();
+    io_process_input();
+
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
     // cache last pwm input type to compare to current type
     pwm_input_type_t pwm_type_last = pwm_type_check;
@@ -388,7 +395,8 @@ int main()
   while(1) {
     watchdog_reset();
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
-    console_write_pwm_info();
+    io_write_state();
+    io_process_input();
     if (pwm_input_valid()) {
       bridge_set_run_duty(g_bridge_run_duty/2 + pwm_input_get_throttle()/2);
     } else {
