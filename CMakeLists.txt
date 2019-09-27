@@ -25,7 +25,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${LINKER_FLAGS} ${ARCH_FLAGS}")
 include(${BOILERPLATE}/src/target/f/f.cmake)
 
 set(MAIN_SRC
-  src/main.c
+  src/main.cpp
   ${ADC_SRC}
   ${COMP_SRC}
   ${DMA_SRC}
