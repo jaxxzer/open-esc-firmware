@@ -1,3 +1,5 @@
+
+extern "C" {
 #include <adc.h>
 #include <bridge.h>
 #include <comparator.h>
@@ -6,6 +8,7 @@
 #include <isr.h>
 #include <pwm-input.h>
 #include <watchdog.h>
+}
 
 #include <libopencm3/cm3/vector.h>
 #include <libopencm3/cm3/nvic.h>
