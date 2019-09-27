@@ -17,6 +17,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 include(src/target/target.cmake)
 
 include_directories(${BOILERPLATE}/lib/libopencm3/include)
+include_directories(${PROJECT_SOURCE_DIR}/lib/ping-cpp/src/message)
 
 set(CMAKE_C_FLAGS "${COMPILER_FLAGS} ${ARCH_FLAGS}")
 set(CMAKE_CXX_FLAGS "${COMPILER_CXX_FLAGS} ${COMPILER_FLAGS} ${ARCH_FLAGS}")
