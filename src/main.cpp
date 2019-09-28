@@ -222,11 +222,20 @@ void zc_timer_initialize()
 // for test
 void test_spin()
 {
+  for (uint32_t i = 0; i < 4000; i++) { io_write_state(); watchdog_reset(); }
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_RUN);
   bridge_set_run_duty(200);
+  watchdog_reset();
   start_motor();
-  for (uint32_t i = 0; i < 400000; i++) { watchdog_reset(); }
+  for (uint32_t i = 200; i < 500; i++) {
+    for (uint32_t j = 0; j < 100; j++) {
+      watchdog_reset();
+      bridge_set_run_duty(i);
+      io_write_state();
+    }
+  }
+
   bridge_disable();
   stop_motor();
 
