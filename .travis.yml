@@ -2,8 +2,16 @@ dist: xenial
 
 language: minimal
 
+addons:
+  apt:
+    packages:
+      - python3-pip
+
+install:
+  - pip3 install --user jinja2;
+
 script:
-- tools/travis-ci-script.sh || travis_terminate 1
+  - tools/travis-ci-script.sh || travis_terminate 1
 
 before_deploy:
   - git tag continuous-deployment -f
