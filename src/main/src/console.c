@@ -27,7 +27,7 @@ void console_initialize() {
 
     rcc_periph_clock_enable(CONSOLE_USART_RCC);
 
-    usart_initialize(CONSOLE_USART, 1000000);
+    usart_initialize(CONSOLE_USART, 115200);
 }
 
 void console_write(const char* string)
