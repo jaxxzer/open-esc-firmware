@@ -78,3 +78,12 @@ add_custom_target(flash
   openocd -f interface/stlink-v2-1.cfg -f ${OPENOCD_TARGET} -c "program debug.elf verify reset exit"
   DEPENDS ${EXE_NAME}
 )
+
+set(PINGCPP_SRC ${PROJECT_SOURCE_DIR}/lib/ping-cpp/src)
+add_custom_target(generate
+  # generate ping-cpp message files
+  ${PINGCPP_SRC}/generate/generate-message.py --output-dir ${PINGCPP_SRC}/message
+  COMMENT "generating ping-cpp messages"
+)
+
+add_dependencies(${EXE_NAME} generate)
