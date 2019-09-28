@@ -85,6 +85,7 @@ void comparator_zc_isr()
   while (zc_counter--) {
     if (!(COMP_CSR(COMP1) & COMP_CSR_OUT)) {
       zc_counter = zc_confirmations_required;
+      if (starting) { comparator_blank(1000000); }
       return;
     }
     debug_pins_toggle0();
