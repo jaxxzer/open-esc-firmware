@@ -5,6 +5,7 @@ extern "C" {
 #include <comparator.h>
 #include <console.h>
 #include <debug-pins.h>
+#include <global.h>
 #include <isr.h>
 #include <pwm-input.h>
 #include <watchdog.h>
