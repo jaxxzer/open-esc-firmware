@@ -56,14 +56,20 @@ void pwm_input_initialize()
   timer_ic_enable(PWM_INPUT_TIMER, PWM_INPUT_TIMER_IC_ID_FALL);
 
   // set slave mode, reset counter on trigger
-  timer_slave_set_mode(PWM_INPUT_TIMER, PWM_INPUT_TIMER_SLAVE_MODE);
+  //timer_slave_set_mode(PWM_INPUT_TIMER, PWM_INPUT_TIMER_SLAVE_MODE);
 
   // set slave mode trigger to trigger input 1
   timer_slave_set_trigger(PWM_INPUT_TIMER, PWM_INPUT_TIMER_SLAVE_TRIGGER);
 
   // disable slave trigger event from setting UIF
   TIM_CR1(PWM_INPUT_TIMER) |= TIM_CR1_URS;
+
+  // update event indiates throttle timeout
+  nvic_enable_irq(PWM_INPUT_TIMER_IRQ);
+  TIM_DIER(PWM_INPUT_TIMER) |= TIM_DIER_UIE;
+
   timer_enable_counter(PWM_INPUT_TIMER); // set CEN
+
 }
 
 void pwm_input_set_type(pwm_input_type_t new_type)
