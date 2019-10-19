@@ -276,7 +276,10 @@ void overcurrent_watchdog_initialize()
 void overcurrent_watchdog_isr()
 {
   bridge_disable();
+  io_write_state();
+
   stop_motor();
+  while (1) {watchdog_reset();};
 }
 
 int main()
