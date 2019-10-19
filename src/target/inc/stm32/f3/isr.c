@@ -1,5 +1,6 @@
 #include <adc.h>
 #include <isr.h>
+#include <throttle.h>
 
 #include <libopencm3/stm32/adc.h>
 #include <libopencm3/stm32/dma.h>
@@ -67,4 +68,9 @@ void tim1_cc_isr() {
     adc_start();
     timer_clear_flag(TIM1, TIM_SR_CC4IF);
   }
+}
+
+void tim2_isr() {
+  throttle_timeout_isr();
+  timer_clear_flag(TIM2, TIM_SR_UIF);
 }

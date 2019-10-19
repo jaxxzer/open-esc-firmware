@@ -1,6 +1,7 @@
 
 #include <adc.h>
 #include <isr.h>
+#include <throttle.h>
 
 #include <libopencm3/stm32/adc.h>
 #include <libopencm3/stm32/dma.h>
@@ -69,4 +70,14 @@ void dma1_channel2_3_dma2_channel1_2_isr() {
     usart_dma_transfer_complete_isr(CONSOLE_USART);
     // clear isr flag
     DMA_IFCR(CONSOLE_TX_DMA) |= DMA_IFCR_CTCIF(CONSOLE_TX_DMA_CHANNEL);
+}
+
+void tim2_isr() {
+  throttle_timeout_isr();
+  timer_clear_flag(TIM2, TIM_SR_UIF);
+}
+
+void tim15_isr() {
+  throttle_timeout_isr();
+  timer_clear_flag(TIM15, TIM_SR_UIF);
 }
