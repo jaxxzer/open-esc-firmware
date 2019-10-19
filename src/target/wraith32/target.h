@@ -1,4 +1,12 @@
 #pragma once
+/*
+ * timer allocations (required channels)
+ * tim1: bridge pwm (4-5) (adc sync, comparator blanking)
+ * tim6: zero-cross (0)
+ * tim15: pwm input (2)
+ * tim16: commutation (0)
+ * tim17: arbitrary comparator blanking (0)
+ */
 
 #include "../inc/stm32/f0/target.h"
 #include <inttypes.h>
