@@ -54,12 +54,14 @@ set(COMMON_SRC
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/adc.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/bridge.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/comparator.c
+  ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/global.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/pwm-input.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/usart.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/watchdog.c
   ${PROJECT_SOURCE_DIR}/src/main/src/console.c
   ${PROJECT_SOURCE_DIR}/src/main/src/debug-pins.c
   ${PROJECT_SOURCE_DIR}/src/main/src/io.cpp
+  ${PROJECT_SOURCE_DIR}/src/main/src/throttle.c
   ${PINGCPP_SRC}/message/ping-message-common.h
   ${PINGCPP_SRC}/message/ping-message-openesc.h
 )
