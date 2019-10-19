@@ -1,0 +1,196 @@
+{
+    "definition": "openesc",
+    "messages": {
+        "set": {
+            "set_device_id": {
+                "id": "100",
+                "description": "Set the device ID.",
+                "payload": [
+                    {
+                        "name": "device_id",
+                        "type": "u8",
+                        "description": "Device ID (0-254). 255 is reserved for broadcast messages."
+                    }
+                ]
+            },
+            "set_throttle": {
+                "id": "101",
+                "description": "set the throttle signal (12bit)",
+                "payload": [
+                    {
+                        "name": "throttle_signal",
+                        "type": "u16",
+                        "description": "the throttle signal! the throttle controls the duty (torque)"
+                    }
+                ]
+            },
+            "set_armed_state": {
+                "id": "101",
+                "description": "arm or disarm the esc",
+                "payload": [
+                    {
+                        "name": "armed",
+                        "type": "u16",
+                        "description": "0: disarmed, 1: armed"
+                    }
+                ]
+            },
+            "set_register": {
+                "id": "102",
+                "description": "write register",
+                "payload": [
+                    {
+                        "name": "value",
+                        "type": "u32",
+                        "description": "register value"
+                    },
+                    {
+                        "name": "address",
+                        "type": "u16",
+                        "description": "register address"
+                    }
+                ]
+            },
+            "set_register_multi": {
+                "id": "103",
+                "description": "write multiple registers",
+                "payload": [
+                    {
+                        "name": "address",
+                        "type": "u16",
+                        "description": "register base address"
+                    },
+                    {
+                        "name": "data",
+                        "type": "vector",
+                        "vector": {
+                            "sizetype": "u16",
+                            "datatype": "u8",
+                            "size": "dynamic"
+                        },
+                        "desciption": "register data"
+                    }
+                ]
+            }
+        },
+        "get": {
+            "state": {
+                "id": "110",
+                "description": "esc state information",
+                "payload": [
+                    {
+                        "name": "phaseA",
+                        "type": "u16",
+                        "description": "phase A adc reading"
+                    },
+                    {
+                        "name": "phaseB",
+                        "type": "u16",
+                        "description": "phase B adc reading"
+                    },
+                    {
+                        "name": "phaseC",
+                        "type": "u16",
+                        "description": "phase C adc reading"
+                    },
+                    {
+                        "name": "neutral",
+                        "type": "u16",
+                        "description": "virtual neutral point adc reading"
+                    },
+                    {
+                        "name": "voltage",
+                        "type": "u16",
+                        "description": "voltage adc reading"
+                    },
+                    {
+                        "name": "current",
+                        "type": "u16",
+                        "description": "current adc reading"
+                    },
+                    {
+                        "name": "throttle",
+                        "type": "u16",
+                        "description": "throttle signal"
+                    },
+                    {
+                        "name": "commutation_period",
+                        "type": "u16",
+                        "description": "commutation timer period (auto-reload ARR register value)"
+                    },
+                    {
+                        "name": "flags",
+                        "type": "u16",
+                        "description": "development flags"
+                    }
+                ]
+            },
+            "register": {
+                "id": "111",
+                "description": "register value",
+                "payload": [
+                    {
+                        "name": "value",
+                        "type": "u32",
+                        "description": "register value"
+                    },
+                    {
+                        "name": "address",
+                        "type": "u16",
+                        "description": "register address"
+                    }
+                ]
+            },
+            "register_multi": {
+                "id": "112",
+                "description": "multiple sequential register values",
+                "payload": [
+                    {
+                        "name": "address",
+                        "type": "u16",
+                        "description": "starting address"
+                    },
+                    {
+                        "name": "data",
+                        "type": "vector",
+                        "vector": {
+                            "sizetype": "u16",
+                            "datatype": "u8",
+                            "size": "dynamic"
+                        },
+                        "description": "register data"
+                    }
+                ]
+            }
+        },
+        "control": {
+            "read_register": {
+                "id": "120",
+                "description": "read a register",
+                "payload": [
+                    {
+                        "name": "address",
+                        "type": "u16",
+                        "description": "register address"
+                    }
+                ]
+            },
+            "read_register_multi": {
+                "id": "121",
+                "description": "read multiple registers",
+                "payload": [
+                    {
+                        "name": "address",
+                        "type": "u16",
+                        "description": "register address"
+                    },
+                    {
+                        "name": "count",
+                        "type": "u16",
+                        "description": "number of registers to read"
+                    }
+                ]
+            }
+        }
+    }
+}
