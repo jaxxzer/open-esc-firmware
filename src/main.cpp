@@ -160,7 +160,7 @@ void commutation_timer_enable_interrupts()
 
 void zc_timer_enable_interrupts()
 {
-  nvic_enable_irq(COMMUTATION_TIMER_IRQ);
+  nvic_enable_irq(ZC_TIMER_IRQ);
   TIM_DIER(ZC_TIMER) |= TIM_DIER_UIE;
 }
 
