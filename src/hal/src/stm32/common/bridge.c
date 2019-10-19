@@ -191,6 +191,9 @@ void bridge_commutate() {
 
     TIM_EGR(TIM1) |= 0x20; // set bit 5 in event generation register, generate commutate event
 
+    // wait for the bit to be cleared by hardware
+    // while (TIM_EGR(TIM1) & 0x20);
+
     // preload next commutation state
     g_bridge_comm_step++;
     g_bridge_comm_step %= 6;
