@@ -6,8 +6,7 @@
 #include <libopencm3/stm32/rcc.h>
 
 #include <target.h>
-
-volatile uint16_t adc_buffer[ADC_MAX_CHANNELS];
+#include <global.h>
 
 void adc_initialize()
 {
@@ -28,12 +27,12 @@ void adc_initialize()
 
     rcc_periph_clock_enable(RCC_DMA1);
     dma_set_peripheral_address(DMA1, DMA_CHANNEL1, (uint32_t)&ADC_DR(ADC1)); // set CPAR
-    dma_set_memory_address(DMA1, DMA_CHANNEL1, (uint32_t)&adc_buffer);             // set CMAR
+    dma_set_memory_address(DMA1, DMA_CHANNEL1, (uint32_t)&g.adc_buffer);             // set CMAR
     dma_set_read_from_peripheral(DMA1, DMA_CHANNEL1);                              // set DIR
     dma_set_memory_size(DMA1, DMA_CHANNEL1, DMA_CCR_MSIZE_16BIT);              // set MSIZE
     dma_set_peripheral_size(DMA1, DMA_CHANNEL1, DMA_CCR_PSIZE_16BIT);          // set PSIZE
     dma_enable_memory_increment_mode(DMA1, DMA_CHANNEL1);                      // set MINC
-    dma_set_number_of_data(DMA1, DMA_CHANNEL1, sizeof(adc_buffer)/2);            // set CNDTR
+    dma_set_number_of_data(DMA1, DMA_CHANNEL1, sizeof(adc_channels));            // set CNDTR
     dma_enable_circular_mode(DMA1, DMA_CHANNEL1);                              // set CIRC
     dma_set_priority(DMA1, DMA_CHANNEL1, DMA_CCR_PL_VERY_HIGH);
     dma_enable_channel(DMA1, DMA_CHANNEL1);                                    // set EN
@@ -74,5 +73,5 @@ void adc_start()
 
 volatile uint16_t adc_read_channel(uint8_t channel)
 {
-    return adc_buffer[channel];
+    return g.adc_buffer[channel];
 }

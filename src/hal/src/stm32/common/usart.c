@@ -35,7 +35,7 @@ void usart_setup_dma_rx(uint32_t usart)
     dma_set_priority(DMA1, DMA_CHANNEL1, DMA_CCR_PL_VERY_HIGH);
 
     DMA_CCR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) |= DMA_CCR_CIRC;
-    DMA_CNDTR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) = 255;
+    DMA_CNDTR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) = 256;
     DMA_CMAR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) = (uint32_t)(_rx_buffer);
     USART_CR3(usart) |= USART_CR3_DMAR;
     DMA_CCR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) |= DMA_CCR_EN;
@@ -86,8 +86,8 @@ uint16_t usart_read(uint32_t usart, char* byte, uint16_t length) {
     return read_bytes;
 }
 
-uint8_t usart_rx_waiting() {
-    return 0xff - DMA_CNDTR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) - _rx_head;
+uint16_t usart_rx_waiting() {
+    return 256 - DMA_CNDTR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) - _rx_head;
 }
 
 // how many bytes are waiting to be shifted out
