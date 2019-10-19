@@ -36,7 +36,7 @@ const uint16_t startup_throttle = 150; // ~7%
 // the comparator output must hold for this many checks in a row before we consider it a valid zero-cross
 // this can be descreased as rpm increases
 const uint16_t startup_zc_confirmations_required = 15;
-const uint16_t slow_run_zc_confirmations_required = 10;
+const uint16_t slow_run_zc_confirmations_required = 14;
 
 // the zero crosses required in closed loop mode, this is variable depending on current speed
 uint16_t run_zc_confirmations_required = slow_run_zc_confirmations_required;
@@ -52,7 +52,7 @@ volatile uint32_t zc_counter; //
 
 // open loop startup commutation timer ARR value
 // TODO do this in human-readable time (microseconds) 
-const uint16_t startup_commutation_period_ticks = 10000;
+const uint16_t startup_commutation_period_ticks = 12000;
 
 void commutation_isr()
 {
@@ -86,7 +86,7 @@ void comparator_zc_isr()
   while (zc_counter--) {
     if (!(COMP_CSR(COMP1) & COMP_CSR_OUT)) {
       zc_counter = zc_confirmations_required;
-      if (starting) { comparator_blank(1000000); }
+      comparator_blank(20000); // give main loop a gasp of air
       return;
     }
     debug_pins_toggle0();
@@ -96,32 +96,37 @@ void comparator_zc_isr()
   // TODO does zero cause update event?
   TIM_CNT(ZC_TIMER) = 0;
 
-  if (starting) {
-    starting = false;
-    debug_pins_toggle1();
-  } else {
-    if (cnt < TIM_ARR(COMMUTATION_TIMER)/2) {
-      starting = true;
+
+  if (cnt < 300) {
+    starting = true;
+  }
+  if (cnt < TIM_ARR(COMMUTATION_TIMER)/2) {
+    if (starting) {
       zc_confirmations_required = startup_zc_confirmations_required;
 
       zc_counter = zc_confirmations_required;
       TIM_ARR(COMMUTATION_TIMER) = startup_commutation_period_ticks;
       debug_pins_toggle1();
       debug_pins_toggle1();
-    } else if (cnt > 2*TIM_ARR(COMMUTATION_TIMER) - TIM_ARR(COMMUTATION_TIMER)/8){
-      // we missed a cross
-      // do nothing
+    }
+  } else if (cnt > TIM_ARR(COMMUTATION_TIMER) + TIM_ARR(COMMUTATION_TIMER)/2 + TIM_ARR(COMMUTATION_TIMER)/4) {
+    // we missed a cross
+    // do nothing
+  } else {
+    if (starting) {
+      starting = false;
+      debug_pins_toggle1();
     } else {
-      if (cnt < 300) {
-        if (run_zc_confirmations_required > 2) {
+      if (cnt < 6000) {
+        if (run_zc_confirmations_required > 6) {
           run_zc_confirmations_required--;
         }
-      } else if (cnt < 800) {
-        if (run_zc_confirmations_required > 3) {
+      } else if (cnt < 8000) {
+        if (run_zc_confirmations_required > 8) {
           run_zc_confirmations_required--;
         }
-      } else if (cnt < 1500) {
-        if (run_zc_confirmations_required > 5) {
+      } else if (cnt < 10000) {
+        if (run_zc_confirmations_required > 10) {
           run_zc_confirmations_required--;
         }
       } else {
@@ -130,9 +135,10 @@ void comparator_zc_isr()
         }
       }
       zc_confirmations_required = run_zc_confirmations_required;
-      TIM_ARR(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2 + cnt/2;
+      TIM_ARR(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2 + TIM_ARR(COMMUTATION_TIMER)/4 + cnt/4;
+      // TIM_ARR(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2 + cnt/2;
       // schedule commutation (+ timing advance)
-      TIM_CNT(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2 + TIM_ARR(COMMUTATION_TIMER)/4;
+      TIM_CNT(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2;
       debug_pins_toggle1();
       debug_pins_toggle1();
       debug_pins_toggle1();
