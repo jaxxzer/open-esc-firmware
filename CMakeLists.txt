@@ -43,6 +43,9 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/src/main/inc
 )
 
+set(PINGCPP_SRC ${PROJECT_SOURCE_DIR}/lib/ping-cpp/src)
+set(PINGPROTOCOL_SRC ${PROJECT_SOURCE_DIR}/lib/ping-cpp/lib/ping-protocol/src)
+
 set(COMMON_SRC
   ${BOILERPLATE}/lib/libopencm3/lib/cm3/nvic.c
   ${BOILERPLATE}/lib/libopencm3/lib/cm3/vector.c
@@ -57,6 +60,8 @@ set(COMMON_SRC
   ${PROJECT_SOURCE_DIR}/src/main/src/console.c
   ${PROJECT_SOURCE_DIR}/src/main/src/debug-pins.c
   ${PROJECT_SOURCE_DIR}/src/main/src/io.cpp
+  ${PINGCPP_SRC}/message/ping-message-common.h
+  ${PINGCPP_SRC}/message/ping-message-openesc.h
 )
 
 set(EXE_NAME open-esc-${TARGET_BOARD})
@@ -81,11 +86,15 @@ add_custom_target(flash
   DEPENDS ${EXE_NAME}
 )
 
-set(PINGCPP_SRC ${PROJECT_SOURCE_DIR}/lib/ping-cpp/src)
-add_custom_target(generate
+
+add_custom_command(OUTPUT ${PINGCPP_SRC}/message/ping-message-common.h
   # generate ping-cpp message files
-  ${PINGCPP_SRC}/generate/generate-message.py --output-dir ${PINGCPP_SRC}/message
+  COMMAND ${PINGCPP_SRC}/generate/generate-message.py --output-dir ${PINGCPP_SRC}/message
   COMMENT "generating ping-cpp messages"
 )
 
-add_dependencies(${EXE_NAME} generate)
+add_custom_command(OUTPUT ${PINGCPP_SRC}/message/ping-message-openesc.h
+  # generate ping-cpp message files
+  COMMAND ${PINGPROTOCOL_SRC}/generator.py --definition ${PROJECT_SOURCE_DIR}/src/util/openesc.json --template ${PINGCPP_SRC}/generate/templates/ping-message-.h.in > ${PINGCPP_SRC}/message/ping-message-openesc.h
+  COMMENT "generating openesc messages"
+)
