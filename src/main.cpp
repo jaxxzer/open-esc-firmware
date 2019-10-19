@@ -8,6 +8,7 @@ extern "C" {
 #include <global.h>
 #include <isr.h>
 #include <pwm-input.h>
+#include <throttle.h>
 #include <watchdog.h>
 }
 
@@ -31,7 +32,7 @@ extern "C" {
 volatile bool starting;
 
 // use this throttle in open loop startup
-const uint16_t startup_throttle = 150; // ~7%
+const uint16_t startup_throttle = 75;
 
 // the comparator output must hold for this many checks in a row before we consider it a valid zero-cross
 // this can be descreased as rpm increases
@@ -286,6 +287,8 @@ int main()
 {
   system_clock_initialize();
 
+  io_initialize();
+
   rcc_periph_clock_enable(LED_GPIO_RCC);
   gpio_mode_setup(LED_GPIO_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_GPIO_PIN);
   for (uint8_t i = 0; i < 10; i++) {
@@ -299,8 +302,6 @@ int main()
   console_write("welcome to open-esc!\r\n");
 
   for (uint32_t j = 0; j < 1000000; j++) { float a = 0.6*9; }
-
-  console_write("initializing...\r\n");
 
   adc_initialize();
   overcurrent_watchdog_initialize();
@@ -320,13 +321,13 @@ int main()
   bridge_set_state(BRIDGE_STATE_AUDIO);
   bridge_set_audio_duty(0x4);
   bridge_set_audio_frequency(1000);
-  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); }
+  for (uint32_t i = 0; i < 40000; i++) { watchdog_reset(); io_process_input(); }
   bridge_set_audio_frequency(1200);
-  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); }
+  for (uint32_t i = 0; i < 40000; i++) { watchdog_reset(); io_process_input(); }
   bridge_set_audio_frequency(1600);
-  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); }
+  for (uint32_t i = 0; i < 40000; i++) { watchdog_reset(); io_process_input(); }
   bridge_disable();
-  for (int i = 0; i < 9999; i++) { watchdog_reset(); }
+  for (int i = 0; i < 9999; i++) { watchdog_reset(); io_process_input(); }
 
   // initialize comparator
   comparator_initialize();
@@ -343,70 +344,44 @@ int main()
   const uint8_t succeded_needed = 3;
   pwm_input_type_t pwm_type_check;
 
-  console_write("waiting for pwm signal...\r\n");
-
-  while (1) {
+  // setup input signal timer with 25ms timeout
+  // todo: rework pwm_input, throttle, and io interfaces for some sense
+  pwm_input_set_type(PWM_INPUT_TYPE_CONVENTIONAL);
+  while (!g.throttle_valid)
+  {
     watchdog_reset();
-
-    io_write_state();
-    io_process_input();
-
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
-    // cache last pwm input type to compare to current type
-    pwm_input_type_t pwm_type_last = pwm_type_check;
-    // get current pwm input type
-    pwm_type_check = pwm_input_detect_type();
-    // check if pwm input type is valid
-    if (pwm_type_check == PWM_INPUT_TYPE_NONE || pwm_type_check == PWM_INPUT_TYPE_UNKNOWN) {
-      succeded = 0;
-      continue;
-    }
-    // check if pwm input type matches the previous type
-    if (pwm_type_check != pwm_type_last && succeded != 0) {
-      succeded = 0;
-      continue;
-    }
-    // have we passed enough checks?
-    if (++succeded == succeded_needed) {
-      break;
-    }
-  }
-
-  // apply pwm input type
-  pwm_input_set_type(pwm_type_check);
-
-  while (!pwm_input_valid()) {
-    watchdog_reset();
+    io_process_input();
+    // todo beep once in a while
   }
 
   // pwm input type valid confirmation beep
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_AUDIO);
-  bridge_set_audio_duty(0xf);
+  bridge_set_audio_duty(0x4);
   bridge_set_audio_frequency(1000);
-  for (uint32_t i = 0; i < 180000; i++) { watchdog_reset(); }
+  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); io_process_input(); }
   bridge_disable();
 
-  console_write_pwm_info();
-  console_write("waiting for low throttle...\r\n");
   // wait for low throttle
-  while (pwm_input_get_throttle() > 50) {
+  while (g.throttle > 0) {
     watchdog_reset();
+    io_process_input();
   }
-
-  console_write("armed!\r\n");
 
   // low throttle armed beep
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_AUDIO);
-  bridge_set_audio_duty(0xf);
+  bridge_set_audio_duty(0x4);
   bridge_set_audio_frequency(1600);
-  for (uint32_t i = 0; i < 180000; i++) { watchdog_reset(); }
+  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); io_process_input(); }
   bridge_disable();
 
   // prepare the motor for run mode (armed)
   bridge_enable();
   bridge_set_state(BRIDGE_STATE_RUN);
+
+  // we are armed
 
   // initialize commutation and zc timers for open loop
   // motor won't move until throttle is applied
@@ -415,12 +390,12 @@ int main()
   while(1) {
     watchdog_reset();
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
-    io_write_state();
     io_process_input();
-    if (pwm_input_valid()) {
-      bridge_set_run_duty(g_bridge_run_duty/2 + pwm_input_get_throttle()/2);
+    if (g.throttle_valid && g.throttle > startup_throttle) {
+      bridge_enable();
+      bridge_set_run_duty(g_bridge_run_duty/2 + g.throttle/2);
     } else {
-      break;
+      bridge_disable();
     }
   }
 
@@ -429,8 +404,6 @@ int main()
   // stop commutation and zc timers
   stop_motor();
 
-  console_write("disarmed!\r\n");
-
   // independent watchdog will issue a system reset
-  while (1);
+  while (1) {};
 }
