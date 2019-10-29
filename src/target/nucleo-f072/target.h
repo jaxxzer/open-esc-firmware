@@ -120,6 +120,6 @@
 #define ADC_GPIOC_PINS  BUS_VOLTAGE_GPIO_PIN
 
 // adc threshold for current channel
-#define ADC_WWDG_CURRENT_MAX 400
+#define ADC_WWDG_CURRENT_MAX 0xfff
 
 extern uint8_t adc_channels[7];

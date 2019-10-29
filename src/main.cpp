@@ -108,80 +108,88 @@ void comparator_zc_isr()
 
   volatile uint16_t cnt = TIM_CNT(ZC_TIMER);
   // TODO does zero cause update event?
-  TIM_CNT(ZC_TIMER) = 0;
+  TIM_CNT(ZC_TIMER) = 1;
 
   if (cnt < 300) {
     starting = true;
-        zc_confirmations_required = startup_zc_confirmations_required;
-
+    zc_confirmations_required = startup_zc_confirmations_required;
     zc_counter = zc_confirmations_required;
     TIM_ARR(COMMUTATION_TIMER) = startup_commutation_period_ticks;
     debug_pins_toggle1();
     debug_pins_toggle1();
-            TIM_CCR1(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/8;
-        comparator_zc_isr_disable();
-        TIM_SR(COMMUTATION_TIMER) = 0;
+    TIM_CCR1(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/8;
+    comparator_zc_isr_disable();
+    TIM_SR(COMMUTATION_TIMER) = 0;
     return;
   }
 
-    if (starting) {
-        starting = false;
-        for (uint8_t i = 0; i < zc_samples; i++) {
-            zc_times[i] = cnt;
-        }
-        debug_pins_toggle1();
-          // blanking period
-        TIM_CCR1(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/8;
+  static bool starting1 = false;
 
-        comparator_zc_isr_disable();
-        TIM_SR(COMMUTATION_TIMER) = 0;
-        return;
+  if (starting) {
+    zc_fail = 0;
+    starting = false;
+    starting1 = true;
+    debug_pins_toggle1();
+    // blanking period
+    TIM_CCR1(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/8;
+
+    TIM_SR(COMMUTATION_TIMER) = 0;
+    comparator_zc_isr_disable();
+    return;
+  }
+
+  if (starting1) {
+    starting1 = false;
+    for (uint8_t i = 0; i < zc_samples; i++) {
+      zc_times[i] = cnt;
     }
+  }
+
   uint16_t mean = zc_mean();
 
   if (cnt < mean/2 || cnt > mean + mean/2) {
-      if (zc_fail >= 15) { // after n+1 failures, we move to open loop
-        starting = true;
-        zc_confirmations_required = startup_zc_confirmations_required;
+    if (zc_fail >= 4) { // after n+1 failures, we move to open loop
+      starting = true;
+      zc_confirmations_required = startup_zc_confirmations_required;
 
-        zc_counter = zc_confirmations_required;
-        TIM_ARR(COMMUTATION_TIMER) = startup_commutation_period_ticks;
-        debug_pins_toggle1();
-        debug_pins_toggle1();
-      } else {
-        zc_fail++; // increment only to 5
-      }
+      zc_counter = zc_confirmations_required;
+      TIM_ARR(COMMUTATION_TIMER) = startup_commutation_period_ticks;
+      debug_pins_toggle1();
+      debug_pins_toggle1();
+    } else {
+      zc_fail++; // increment only to 5
+    }
   } else {
-      zc_fail = 0;
-      zc_times[zc_current_sample] = cnt;
-      zc_current_sample++;
-      zc_current_sample = zc_current_sample % 6;
+    zc_fail = 0;
+    zc_times[zc_current_sample] = cnt;
+    zc_current_sample++;
+    zc_current_sample = zc_current_sample % 6;
 
-      if (cnt < 6000) {
-        if (run_zc_confirmations_required > 8) {
-          run_zc_confirmations_required--;
-        }
-      } else if (cnt < 8000) {
-        if (run_zc_confirmations_required > 12) {
-          run_zc_confirmations_required--;
-        }
-      } else if (cnt < 10000) {
-        if (run_zc_confirmations_required > 16) {
-          run_zc_confirmations_required--;
-        }
-      } else {
-        if (run_zc_confirmations_required < slow_run_zc_confirmations_required) {
-          run_zc_confirmations_required++;
-        }
+    if (cnt < 6000) {
+      if (run_zc_confirmations_required > 8) {
+        run_zc_confirmations_required--;
       }
-      zc_confirmations_required = run_zc_confirmations_required;
-      TIM_ARR(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2 + TIM_ARR(COMMUTATION_TIMER)/4 + cnt/4;
-      // TIM_ARR(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2 + cnt/2;
-      // schedule commutation (+ timing advance)
-      TIM_CNT(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2;
-      debug_pins_toggle1();
-      debug_pins_toggle1();
-      debug_pins_toggle1();
+    } else if (cnt < 8000) {
+      if (run_zc_confirmations_required > 12) {
+        run_zc_confirmations_required--;
+      }
+    } else if (cnt < 10000) {
+      if (run_zc_confirmations_required > 16) {
+        run_zc_confirmations_required--;
+      }
+    } else {
+      if (run_zc_confirmations_required < slow_run_zc_confirmations_required) {
+        run_zc_confirmations_required++;
+      }
+    }
+    zc_confirmations_required = run_zc_confirmations_required;
+    TIM_ARR(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2 + TIM_ARR(COMMUTATION_TIMER)/4 + cnt/4;
+    // TIM_ARR(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2 + cnt/2;
+    // schedule commutation (+ timing advance)
+    TIM_CNT(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/2;
+    debug_pins_toggle1();
+    debug_pins_toggle1();
+    debug_pins_toggle1();
   }
 
   // blanking period
