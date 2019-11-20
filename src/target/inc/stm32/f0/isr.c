@@ -81,3 +81,8 @@ void tim15_isr() {
   throttle_timeout_isr();
   timer_clear_flag(TIM15, TIM_SR_UIF);
 }
+
+void tim3_isr() {
+  throttle_timeout_isr();
+  timer_clear_flag(TIM3, TIM_SR_UIF);
+}

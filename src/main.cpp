@@ -309,10 +309,10 @@ int main()
   for (uint32_t j = 0; j < 1000000; j++) { float a = 0.6*9; }
 
   adc_initialize();
-  overcurrent_watchdog_initialize();
+  //overcurrent_watchdog_initialize();
   adc_start();
 
-  watchdog_start(10); // 10ms watchdog timeout
+  //watchdog_start(10); // 10ms watchdog timeout
 
   // initalize bridge for stspin
   rcc_periph_clock_enable(RCC_GPIOF);
@@ -369,7 +369,9 @@ int main()
   while (!g.throttle_valid)
   {
     watchdog_reset();
+
     gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+
     io_process_input();
     // todo beep once in a while
   }

@@ -110,23 +110,21 @@
 #define ADC_RCC RCC_ADC1
 
 #define ADC_CHANNEL_BUS_VOLTAGE 3
-#define ADC_CHANNEL_BUS_CURRENT 6
+#define ADC_CHANNEL_BUS_CURRENT 4
 #define ADC_CHANNEL_TEMPERATURE 16
 
 #define ADC_IDX_BUS_VOLTAGE 0
 #define ADC_IDX_BUS_CURRENT 1
 #define ADC_IDX_TEMPERATURE 2
 
-#define NEUTRAL_VOLTAGE_GPIO_PIN GPIO1
 #define BUS_VOLTAGE_GPIO_PIN GPIO3
-#define BUS_CURRENT_GPIO_PIN GPIO6
+#define BUS_CURRENT_GPIO_PIN GPIO4
 
-#define ADC_GPIOA_PINS  NEUTRAL_VOLTAGE_GPIO_PIN | \
-                        BUS_VOLTAGE_GPIO_PIN | \
+#define ADC_GPIOA_PINS  BUS_VOLTAGE_GPIO_PIN | \
                         BUS_CURRENT_GPIO_PIN
 
 // TODO from the F0A datasheet: each unused gpio should be programed to output mode low by software after startup
 
-#define ADC_WWDG_CURRENT_MAX 400
+#define ADC_WWDG_CURRENT_MAX 4000
 
 extern uint8_t adc_channels[3];
