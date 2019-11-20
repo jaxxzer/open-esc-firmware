@@ -3,6 +3,7 @@
 #pragma once
 
 #include <inttypes.h>
+#include <stdbool.h>
 
 typedef enum {
     COMP_STATE0,
@@ -18,6 +19,8 @@ volatile comp_state_e g_comparator_state;
 void comparator_initialize();
 
 void comparator_set_state(comp_state_e new_state);
+
+bool comparator_get_output();
 
 void comparator_zc_isr_enable();
 void comparator_zc_isr_disable();

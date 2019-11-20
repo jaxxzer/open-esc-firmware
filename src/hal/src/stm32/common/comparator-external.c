@@ -100,3 +100,12 @@ void comparator_blank(uint32_t nanoseconds)
     timer_set_period(COMPARATOR_BLANK_TIMER, nanoseconds / comparator_blank_tick_period_ns);
     timer_enable_counter(COMPARATOR_BLANK_TIMER);
 }
+
+bool comparator_get_output()
+{
+    if (comparator_states[g_comparator_state].trigger == EXTI_TRIGGER_RISING) {
+        return gpio_get(comparator_states[g_comparator_state].port, comparator_states[g_comparator_state].pin);
+    } else {
+        return !gpio_get(comparator_states[g_comparator_state].port, comparator_states[g_comparator_state].pin);
+    }
+}
