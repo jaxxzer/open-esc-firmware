@@ -5,7 +5,7 @@
 
 #include <target.h>
 
-// #define DEBUG_PINS
+#define DEBUG_PINS
 
 void debug_pins_initialize()
 {
