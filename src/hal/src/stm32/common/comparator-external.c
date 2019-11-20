@@ -21,12 +21,12 @@ typedef struct
 } comparator_state_t;
 
 volatile comparator_state_t comparator_states[6] = {
-    GPIOF, GPIO1, EXTI1, EXTI_TRIGGER_RISING, NVIC_EXTI0_1_IRQ,
-    GPIOB, GPIO0, EXTI0, EXTI_TRIGGER_FALLING, NVIC_EXTI0_1_IRQ,
-    GPIOB, GPIO1, EXTI1, EXTI_TRIGGER_RISING, NVIC_EXTI0_1_IRQ,
     GPIOF, GPIO1, EXTI1, EXTI_TRIGGER_FALLING, NVIC_EXTI0_1_IRQ,
-    GPIOB, GPIO0, EXTI0, EXTI_TRIGGER_RISING, NVIC_EXTI0_1_IRQ,
+    GPIOB, GPIO1, EXTI1, EXTI_TRIGGER_RISING, NVIC_EXTI0_1_IRQ,
+    GPIOF, GPIO0, EXTI0, EXTI_TRIGGER_FALLING, NVIC_EXTI0_1_IRQ,
+    GPIOF, GPIO1, EXTI1, EXTI_TRIGGER_RISING, NVIC_EXTI0_1_IRQ,
     GPIOB, GPIO1, EXTI1, EXTI_TRIGGER_FALLING, NVIC_EXTI0_1_IRQ,
+    GPIOF, GPIO0, EXTI0, EXTI_TRIGGER_RISING, NVIC_EXTI0_1_IRQ,
 };
 
 uint32_t comparator_blank_tick_period_ns;
@@ -55,9 +55,12 @@ void comparator_initialize()
     rcc_periph_clock_enable(COMPARATOR_B_GPIO_RCC);
     rcc_periph_clock_enable(COMPARATOR_C_GPIO_RCC);
 
-    gpio_mode_setup(COMPARATOR_A_GPIO_PORT, GPIO_MODE_INPUT, GPIO_PUPD_NONE, COMPARATOR_A_GPIO_PIN);
-    gpio_mode_setup(COMPARATOR_B_GPIO_PORT, GPIO_MODE_INPUT, GPIO_PUPD_NONE, COMPARATOR_B_GPIO_PIN);
-    gpio_mode_setup(COMPARATOR_C_GPIO_PORT, GPIO_MODE_INPUT, GPIO_PUPD_NONE, COMPARATOR_C_GPIO_PIN);
+    // gpio_mode_setup(COMPARATOR_A_GPIO_PORT, GPIO_MODE_INPUT, GPIO_PUPD_NONE, COMPARATOR_A_GPIO_PIN);
+    // gpio_mode_setup(COMPARATOR_B_GPIO_PORT, GPIO_MODE_INPUT, GPIO_PUPD_NONE, COMPARATOR_B_GPIO_PIN);
+    // gpio_mode_setup(COMPARATOR_C_GPIO_PORT, GPIO_MODE_INPUT, GPIO_PUPD_NONE, COMPARATOR_C_GPIO_PIN);
+    gpio_mode_setup(COMPARATOR_A_GPIO_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, COMPARATOR_A_GPIO_PIN);
+    gpio_mode_setup(COMPARATOR_B_GPIO_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, COMPARATOR_B_GPIO_PIN);
+    gpio_mode_setup(COMPARATOR_C_GPIO_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, COMPARATOR_C_GPIO_PIN);
 
     // enable comparator (there is a startup delay)
     comparator_set_state(COMP_STATE0);
@@ -74,10 +77,11 @@ void comparator_initialize()
 void comparator_set_state(comp_state_e new_state)
 {
     // de-initialize current state
-    comparator_zc_isr_disable();
+    //comparator_zc_isr_disable();
+
+    g_comparator_state = new_state%6;
     exti_select_source(comparator_states[g_comparator_state].exti, comparator_states[g_comparator_state].port);
     exti_set_trigger(comparator_states[g_comparator_state].exti, comparator_states[g_comparator_state].trigger);
-    g_comparator_state = new_state%6;
 }
 
 void comparator_zc_isr_enable()
@@ -90,6 +94,7 @@ void comparator_zc_isr_enable()
 void comparator_zc_isr_disable()
 {
     nvic_disable_irq(comparator_states[g_comparator_state].nvic);
+    nvic_clear_pending_irq(comparator_states[g_comparator_state].nvic);
     exti_disable_request(comparator_states[g_comparator_state].exti);
     exti_reset_request(comparator_states[g_comparator_state].exti);
 }
