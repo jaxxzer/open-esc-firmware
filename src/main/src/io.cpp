@@ -183,10 +183,26 @@ void io_write_message(ping_message* message)
 void io_write_state()
 {
   static openesc_state message;
+#if defined(ADC_IDX_PHASEA_VOLTAGE)
   message.set_phaseA(g.adc_buffer[ADC_IDX_PHASEA_VOLTAGE]);
+#else
+  message.set_phaseA(0);
+#endif
+#if defined(ADC_IDX_PHASEB_VOLTAGE)
   message.set_phaseB(g.adc_buffer[ADC_IDX_PHASEB_VOLTAGE]);
+#else
+  message.set_phaseB(0);
+#endif
+#if defined(ADC_IDX_PHASEC_VOLTAGE)
   message.set_phaseC(g.adc_buffer[ADC_IDX_PHASEC_VOLTAGE]);
+#else
+  message.set_phaseC(0);
+#endif
+#if defined(ADC_IDX_NEUTRAL_VOLTAGE)
   message.set_neutral(g.adc_buffer[ADC_IDX_NEUTRAL_VOLTAGE]);
+#else
+  message.set_neutral(0);
+#endif
   message.set_current(g.adc_buffer[ADC_IDX_BUS_CURRENT]);
   message.set_voltage(g.adc_buffer[ADC_IDX_BUS_VOLTAGE]);
   message.set_throttle(g.throttle);

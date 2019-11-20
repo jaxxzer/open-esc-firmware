@@ -107,41 +107,26 @@
 #define COMPARATOR_BLANK_TIMER TIM17
 #define COMPARATOR_BLANK_IRQ NVIC_TIM17_IRQ
 
-
 #define ADC_RCC RCC_ADC1
 
-#define ADC_CHANNEL_PHASEC_VOLTAGE 0
-#define ADC_CHANNEL_NEUTRAL_VOLTAGE 1
 #define ADC_CHANNEL_BUS_VOLTAGE 3
-#define ADC_CHANNEL_PHASEA_VOLTAGE 4
-#define ADC_CHANNEL_PHASEB_VOLTAGE 5
 #define ADC_CHANNEL_BUS_CURRENT 6
 #define ADC_CHANNEL_TEMPERATURE 16
 
-#define ADC_IDX_PHASEC_VOLTAGE 0
-#define ADC_IDX_NEUTRAL_VOLTAGE 1
-#define ADC_IDX_BUS_VOLTAGE 2
-#define ADC_IDX_PHASEA_VOLTAGE 3
-#define ADC_IDX_PHASEB_VOLTAGE 4
-#define ADC_IDX_BUS_CURRENT 5
-#define ADC_IDX_TEMPERATURE 6
+#define ADC_IDX_BUS_VOLTAGE 0
+#define ADC_IDX_BUS_CURRENT 1
+#define ADC_IDX_TEMPERATURE 2
 
-#define PHASEC_VOLTAGE_GPIO_PIN GPIO0
 #define NEUTRAL_VOLTAGE_GPIO_PIN GPIO1
 #define BUS_VOLTAGE_GPIO_PIN GPIO3
-#define PHASEA_VOLTAGE_GPIO_PIN GPIO4
-#define PHASEB_VOLTAGE_GPIO_PIN GPIO5
 #define BUS_CURRENT_GPIO_PIN GPIO6
 
-#define ADC_GPIOA_PINS  PHASEC_VOLTAGE_GPIO_PIN | \
-                        NEUTRAL_VOLTAGE_GPIO_PIN | \
+#define ADC_GPIOA_PINS  NEUTRAL_VOLTAGE_GPIO_PIN | \
                         BUS_VOLTAGE_GPIO_PIN | \
-                        PHASEA_VOLTAGE_GPIO_PIN | \
-                        PHASEB_VOLTAGE_GPIO_PIN | \
                         BUS_CURRENT_GPIO_PIN
 
 // TODO from the F0A datasheet: each unused gpio should be programed to output mode low by software after startup
 
 #define ADC_WWDG_CURRENT_MAX 400
 
-extern uint8_t adc_channels[7];
+extern uint8_t adc_channels[3];
