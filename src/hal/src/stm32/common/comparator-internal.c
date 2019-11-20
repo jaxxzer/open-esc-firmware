@@ -87,3 +87,8 @@ void comparator_blank(uint32_t nanoseconds)
     timer_set_period(COMPARATOR_BLANK_TIMER, nanoseconds / comparator_blank_tick_period_ns);
     timer_enable_counter(COMPARATOR_BLANK_TIMER);
 }
+
+bool comparator_get_output()
+{
+    return COMP_CSR(COMP1) & COMP_CSR_OUT;
+}
