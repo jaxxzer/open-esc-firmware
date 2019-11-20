@@ -11,7 +11,7 @@
 
 #include <target.h>
 
-void tim6_dac_isr()
+void tim14_isr()
 {
   // timeout waiting for zero-cross, go to open loop
   // TODO should load commutation timer default values
