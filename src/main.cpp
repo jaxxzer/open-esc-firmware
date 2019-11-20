@@ -65,7 +65,7 @@ void commutation_isr()
     // TODO rotate table to get this right
     // comparator_set_state((comp_state_e)(g_bridge_comm_step + 2));
     // stspin
-    comparator_set_state(g_bridge_comm_step + 5);
+    comparator_set_state((comp_state_e)(g_bridge_comm_step + 5));
     timer_clear_flag(COMMUTATION_TIMER, TIM_SR_UIF);
     /////
     debug_pins_toggle2();

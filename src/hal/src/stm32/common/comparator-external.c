@@ -44,11 +44,6 @@ void comparator_blank_complete_isr()
     comparator_zc_isr_enable();
 }
 
-void tim17_isr() {
-    comparator_blank_complete_isr();
-    timer_clear_flag(TIM17, TIM_SR_UIF);
-}
-
 void comparator_initialize()
 {
     rcc_periph_clock_enable(COMPARATOR_A_GPIO_RCC);
