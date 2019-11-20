@@ -125,6 +125,6 @@
 
 // TODO from the F0A datasheet: each unused gpio should be programed to output mode low by software after startup
 
-#define ADC_WWDG_CURRENT_MAX 4000
+#define ADC_WWDG_CURRENT_MAX 250
 
 extern uint8_t adc_channels[3];
