@@ -15,6 +15,7 @@ extern "C" {
 // hpp
 #include <io.h>
 
+#include <libopencm3/stm32/exti.h>
 #include <libopencm3/cm3/vector.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/adc.h>
@@ -62,7 +63,11 @@ void commutation_isr()
 
     zc_counter = zc_confirmations_required; // remove
     // TODO rotate table to get this right
-    comparator_set_state((comp_state_e)(g_bridge_comm_step + 2));
+    // comparator_set_state((comp_state_e)(g_bridge_comm_step + 2));
+    // stspin
+    comparator_set_state(g_bridge_comm_step + 5);
+    timer_clear_flag(COMMUTATION_TIMER, TIM_SR_UIF);
+    /////
     debug_pins_toggle2();
 }
 
@@ -85,7 +90,7 @@ void comparator_zc_timeout_isr() {
 void comparator_zc_isr()
 {
   while (zc_counter--) {
-    if (!(COMP_CSR(COMP1) & COMP_CSR_OUT)) {
+    if (!comparator_get_output()) {
       zc_counter = zc_confirmations_required;
       comparator_blank(20000); // give main loop a gasp of air
       return;
@@ -190,7 +195,7 @@ void start_motor()
   TIM_CR1(COMMUTATION_TIMER) &= ~TIM_CR1_CEN; // disable counter
   TIM_CNT(COMMUTATION_TIMER) = 1; // set counter to zero
   TIM_ARR(COMMUTATION_TIMER) = startup_commutation_period_ticks;
-  TIM_CCR1(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/16;
+  TIM_CCR1(COMMUTATION_TIMER) = TIM_ARR(COMMUTATION_TIMER)/8;
   zc_counter = zc_confirmations_required;
 
   g_bridge_comm_step = BRIDGE_COMM_STEP0;
@@ -314,6 +319,12 @@ int main()
   gpio_mode_setup(GPIOF, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO6 | GPIO7);
   gpio_set(GPIOF, GPIO6 | GPIO7);
 
+  debug_pins_initialize();
+
+  // enable led
+  rcc_periph_clock_enable(LED_GPIO_RCC);
+  gpio_mode_setup(LED_GPIO_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_GPIO_PIN);
+
   bridge_initialize();
 
   // setup adc synchronization
@@ -333,6 +344,9 @@ int main()
   for (uint32_t i = 0; i < 40000; i++) { watchdog_reset(); io_process_input(); }
   bridge_disable();
   for (int i = 0; i < 9999; i++) { watchdog_reset(); io_process_input(); }
+
+  // stspin
+  rcc_periph_clock_enable(RCC_SYSCFG_COMP);
 
   // initialize comparator
   comparator_initialize();
