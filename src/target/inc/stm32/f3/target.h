@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../common/target.h"
+#define ZC_TIMER TIM6
+#define ZC_TIMER_RCC RCC_TIM6
+#define ZC_TIMER_IRQ NVIC_TIM6_DAC_IRQ
 
 #define COMMUTATION_TIMER TIM16
 #define COMMUTATION_TIMER_RCC RCC_TIM16

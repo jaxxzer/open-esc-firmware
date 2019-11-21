@@ -46,6 +46,14 @@ void comparator_blank_complete_isr()
 
 void comparator_initialize()
 {
+#if defined(STM32F3)
+    rcc_periph_clock_enable(RCC_SYSCFG);
+#elif defined(STM32F0)
+    rcc_periph_clock_enable(RCC_SYSCFG_COMP);
+#else
+# error
+#endif
+
     rcc_periph_clock_enable(COMPARATOR_A_GPIO_RCC);
     rcc_periph_clock_enable(COMPARATOR_B_GPIO_RCC);
     rcc_periph_clock_enable(COMPARATOR_C_GPIO_RCC);

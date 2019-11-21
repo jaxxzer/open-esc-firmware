@@ -102,7 +102,6 @@ void comparator_zc_isr()
   // TODO does zero cause update event?
   TIM_CNT(ZC_TIMER) = 0;
 
-
   if (cnt < 300) {
     starting = true;
   }
@@ -344,9 +343,6 @@ int main()
   for (uint32_t i = 0; i < 40000; i++) { watchdog_reset(); io_process_input(); }
   bridge_disable();
   for (int i = 0; i < 9999; i++) { watchdog_reset(); io_process_input(); }
-
-  // stspin
-  rcc_periph_clock_enable(RCC_SYSCFG_COMP);
 
   // initialize comparator
   comparator_initialize();

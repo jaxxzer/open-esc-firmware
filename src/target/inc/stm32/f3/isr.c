@@ -18,7 +18,7 @@ void comp123_isr()
   }
 }
 
-void tim14_isr()
+void tim6_dac_isr()
 {
   // timeout waiting for zero-cross, go to open loop
   // TODO should load commutation timer default values
