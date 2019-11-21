@@ -128,3 +128,8 @@
 #define ADC_WWDG_CURRENT_MAX 250
 
 extern uint8_t adc_channels[3];
+
+// trigger platform-specific bridge initialization
+// (set gpiof 6 and 7 in order to enable bridge)
+// TODO abstract this
+#define STSPIN

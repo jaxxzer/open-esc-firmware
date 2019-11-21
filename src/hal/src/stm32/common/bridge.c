@@ -40,6 +40,13 @@ void bridge_gpio_setup(
 
 void bridge_initialize()
 {
+#if defined(STSPIN)
+    // initalize bridge for stspin
+    rcc_periph_clock_enable(RCC_GPIOF);
+    gpio_mode_setup(GPIOF, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO6 | GPIO7);
+    gpio_set(GPIOF, GPIO6 | GPIO7);
+#endif
+
     // TODO optimize
     bridge_gpio_setup(
         BRIDGE_HI_A_GPIO_RCC,
