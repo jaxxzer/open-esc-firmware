@@ -309,10 +309,10 @@ int main()
   for (uint32_t j = 0; j < 1000000; j++) { float a = 0.6*9; }
 
   adc_initialize();
-  //overcurrent_watchdog_initialize();
+  overcurrent_watchdog_initialize();
   adc_start();
 
-  //watchdog_start(10); // 10ms watchdog timeout
+  watchdog_start(10); // 10ms watchdog timeout
 
   // initalize bridge for stspin
   rcc_periph_clock_enable(RCC_GPIOF);
