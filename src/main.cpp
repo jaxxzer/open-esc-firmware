@@ -85,7 +85,7 @@ void comparator_zc_timeout_isr() {
 void comparator_zc_isr()
 {
   while (zc_counter--) {
-    if (!(COMP_CSR(COMP1) & COMP_CSR_OUT)) {
+    if (!comparator_get_output()) {
       zc_counter = zc_confirmations_required;
       comparator_blank(20000); // give main loop a gasp of air
       return;
