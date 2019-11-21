@@ -68,9 +68,30 @@ void console_write_adc_info()
         adc_read_channel(ADC_IDX_TEMPERATURE),
         adc_read_channel(ADC_IDX_BUS_VOLTAGE),
         adc_read_channel(ADC_IDX_BUS_CURRENT),
+
+#if defined(ADC_IDX_PHASEA_VOLTAGE)
         adc_read_channel(ADC_IDX_PHASEA_VOLTAGE),
+#else
+        0,
+#endif
+
+#if defined(ADC_IDX_PHASEB_VOLTAGE)
         adc_read_channel(ADC_IDX_PHASEB_VOLTAGE),
+#else
+        0,
+#endif
+
+#if defined(ADC_IDX_PHASEC_VOLTAGE)
         adc_read_channel(ADC_IDX_PHASEC_VOLTAGE),
-        adc_read_channel(ADC_IDX_NEUTRAL_VOLTAGE));
+#else
+        0,
+#endif
+
+#if defined(ADC_IDX_NEUTRAL_VOLTAGE)
+        adc_read_channel(ADC_IDX_NEUTRAL_VOLTAGE)
+#else
+        0
+#endif
+);
     usart_write(CONSOLE_USART, buffer, size);
 }
