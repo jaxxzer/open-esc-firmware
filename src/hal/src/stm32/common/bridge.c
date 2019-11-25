@@ -183,6 +183,8 @@ void bridge_set_run_duty(uint16_t duty)
         duty = 512; // clamp duty to ~25% max for testing
     }
 
+    // set adc sample trigger to 75% period when duty < 50% and
+    // 25% period when duty > 50%
     if (duty > 0x400) {
         TIM1_CCR4 = 0x200;
     } else {
