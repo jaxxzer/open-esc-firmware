@@ -7,6 +7,12 @@
 
 #include <target.h>
 
+volatile bridge_state_e g_bridge_state;
+volatile bridge_comm_step_e g_bridge_comm_step;
+
+volatile uint16_t g_bridge_run_duty; // run mode duty
+volatile uint8_t g_bridge_audio_duty; // audio mode duty
+
 typedef struct {
     uint32_t CCER; // CCER register value
     volatile uint32_t* pwmChannel; // ccr register address to write zero
