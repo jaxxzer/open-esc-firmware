@@ -26,11 +26,6 @@ extern "C" {
 
 #include <target.h>
 
-// if true, we are in open-loop
-// we wait for the first zero cross period (2 sequential valid zero crosses)
-// timing, then we will enter closed loop
-volatile bool starting;
-
 // use this throttle in open loop startup
 const uint16_t startup_throttle = 75;
 
@@ -42,18 +37,11 @@ const uint16_t slow_run_zc_confirmations_required = 14;
 // the zero crosses required in closed loop mode, this is variable depending on current speed
 uint16_t run_zc_confirmations_required = slow_run_zc_confirmations_required;
 
-// the zero cross confirmations currently required to pass a zero cross check
-uint32_t zc_confirmations_required = startup_zc_confirmations_required;
-
-// commutation and zero cross timers must have the same frequency
-const uint32_t commutation_zc_timer_frequency = 2000000;
-
-// remaining zero cross checks before we pass
-volatile uint32_t zc_counter; // 
-
-// open loop startup commutation timer ARR value
-// TODO do this in human-readable time (microseconds) 
+// declared/documented in global.h
+volatile bool starting;
 const uint16_t startup_commutation_period_ticks = 12000;
+volatile uint32_t zc_counter;
+uint32_t zc_confirmations_required = startup_zc_confirmations_required;
 
 void commutation_isr()
 {

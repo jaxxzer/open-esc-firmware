@@ -1,5 +1,7 @@
 #pragma once
 
+// todo move this file out of hal and into application src
+
 #include <inttypes.h>
 #include <stdbool.h>
 
@@ -17,3 +19,18 @@ typedef struct {
 } global_t;
 
 extern global_t g;
+
+// if true, we are in open-loop
+// we wait for the first zero cross period (2 sequential valid zero crosses)
+// timing, then we will enter closed loop
+extern volatile bool starting;
+
+// open loop startup commutation timer ARR value
+// TODO do this in human-readable time (microseconds)
+extern const uint16_t startup_commutation_period_ticks;
+
+// REMAINING zero cross checks before we pass
+extern volatile uint32_t zc_counter;
+
+// the zero cross confirmations currently required to pass a zero cross check
+extern uint32_t zc_confirmations_required;
