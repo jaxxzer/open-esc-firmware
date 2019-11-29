@@ -54,12 +54,6 @@ void commutation_isr()
     debug_pins_toggle2();
 }
 
-void comparator_unblank_isr()
-{
-  zc_counter = zc_confirmations_required; // remove
-  comparator_zc_isr_enable();
-}
-
 // zc timer isr
 void comparator_zc_timeout_isr() {
   // timeout waiting for zero-cross, go to open loop

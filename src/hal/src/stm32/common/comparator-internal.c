@@ -92,3 +92,8 @@ bool comparator_get_output()
 {
     return COMP_CSR(COMP1) & COMP_CSR_OUT;
 }
+
+void comparator_unblank_isr()
+{
+  comparator_zc_isr_enable();
+}

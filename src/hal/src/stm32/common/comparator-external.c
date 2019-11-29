@@ -117,3 +117,8 @@ bool comparator_get_output()
         return !gpio_get(comparator_states[g_comparator_state].port, comparator_states[g_comparator_state].pin);
     }
 }
+
+void comparator_unblank_isr()
+{
+    comparator_zc_isr_enable();
+}
