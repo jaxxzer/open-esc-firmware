@@ -2,6 +2,7 @@
 
 #include <bridge.h>
 #include <comparator.h>
+#include <debug-pins.h>
 #include <global.h>
 
 #include <target.h>
@@ -85,4 +86,15 @@ void zc_timer_initialize()
 
   // commutation timer takes priority over comparator
   nvic_set_priority(ZC_TIMER_IRQ, 0x40);
+}
+
+void commutation_isr()
+{
+    bridge_commutate();
+    comparator_zc_isr_disable();
+
+    zc_counter = zc_confirmations_required; // remove
+    // TODO rotate table to get this right
+    comparator_set_state((comp_state_e)(g_bridge_comm_step + 2));
+    debug_pins_toggle2();
 }

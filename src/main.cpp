@@ -39,17 +39,6 @@ const uint16_t startup_zc_confirmations_required = 15;
 volatile uint32_t zc_counter;
 uint32_t zc_confirmations_required = startup_zc_confirmations_required;
 
-void commutation_isr()
-{
-    bridge_commutate();
-    comparator_zc_isr_disable();
-
-    zc_counter = zc_confirmations_required; // remove
-    // TODO rotate table to get this right
-    comparator_set_state((comp_state_e)(g_bridge_comm_step + 2));
-    debug_pins_toggle2();
-}
-
 // for test
 void test_spin()
 {
