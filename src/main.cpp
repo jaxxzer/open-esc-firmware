@@ -9,7 +9,6 @@ extern "C" {
 #include <global.h>
 #include <isr.h>
 #include <pwm-input.h>
-#include <throttle.h>
 #include <watchdog.h>
 }
 

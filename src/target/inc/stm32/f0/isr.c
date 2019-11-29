@@ -1,7 +1,6 @@
 
 #include <adc.h>
 #include <isr.h>
-#include <throttle.h>
 
 #include <libopencm3/stm32/adc.h>
 #include <libopencm3/stm32/dma.h>
@@ -73,16 +72,16 @@ void dma1_channel2_3_dma2_channel1_2_isr() {
 }
 
 void tim2_isr() {
-  throttle_timeout_isr();
+  io_control_timeout_isr();
   timer_clear_flag(TIM2, TIM_SR_UIF);
 }
 
 void tim15_isr() {
-  throttle_timeout_isr();
+  io_control_timeout_isr();
   timer_clear_flag(TIM15, TIM_SR_UIF);
 }
 
 void tim3_isr() {
-  throttle_timeout_isr();
+  io_control_timeout_isr();
   timer_clear_flag(TIM3, TIM_SR_UIF);
 }

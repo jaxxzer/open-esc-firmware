@@ -9,7 +9,6 @@ extern "C" {
 #include <adc.h>
 #include <pwm-input.h>
 #include <usart.h>
-#include <throttle.h>
 }
 
 #include <libopencm3/stm32/usart.h>
@@ -25,6 +24,20 @@ common_nack nack(32);
 
 #define NUM_REGS 32
 uint32_t registers[NUM_REGS];
+
+extern "C"
+void io_control_timeout_isr()
+{
+  g.throttle_valid = false;
+}
+
+// this is used only when pwm signal is not present
+// pwm input driver manages the timeout itself
+void io_control_timeout_reset()
+{
+  TIM_CNT(PWM_INPUT_TIMER) = 1;
+}
+
 void io_initialize()
 {
   ack.updateChecksum();
@@ -143,7 +156,7 @@ void io_handle_message(ping_message* message)
       } else {
         g.throttle_valid = true;
         g.throttle = m->throttle_signal();
-        throttle_timeout_reset();
+        io_control_timeout_reset();
         io_write_state();
       }
     }
