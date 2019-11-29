@@ -20,14 +20,23 @@ typedef struct {
 
 extern global_t g;
 
+// the zero crosses required in closed loop mode, this is variable depending on current speed
+extern uint16_t run_zc_confirmations_required;
+
 // if true, we are in open-loop
 // we wait for the first zero cross period (2 sequential valid zero crosses)
 // timing, then we will enter closed loop
 extern volatile bool starting;
 
+extern const uint16_t slow_run_zc_confirmations_required;
+
 // open loop startup commutation timer ARR value
 // TODO do this in human-readable time (microseconds)
 extern const uint16_t startup_commutation_period_ticks;
+
+// the comparator output must hold for this many checks in a row before we consider it a valid zero-cross
+// this can be descreased as rpm increases
+extern const uint16_t startup_zc_confirmations_required;
 
 // REMAINING zero cross checks before we pass
 extern volatile uint32_t zc_counter;

@@ -29,17 +29,13 @@ extern "C" {
 // use this throttle in open loop startup
 const uint16_t startup_throttle = 75;
 
-// the comparator output must hold for this many checks in a row before we consider it a valid zero-cross
-// this can be descreased as rpm increases
-const uint16_t startup_zc_confirmations_required = 15;
-const uint16_t slow_run_zc_confirmations_required = 14;
-
-// the zero crosses required in closed loop mode, this is variable depending on current speed
-uint16_t run_zc_confirmations_required = slow_run_zc_confirmations_required;
 
 // declared/documented in global.h
+uint16_t run_zc_confirmations_required = slow_run_zc_confirmations_required;
+const uint16_t slow_run_zc_confirmations_required = 14;
 volatile bool starting;
 const uint16_t startup_commutation_period_ticks = 12000;
+const uint16_t startup_zc_confirmations_required = 15;
 volatile uint32_t zc_counter;
 uint32_t zc_confirmations_required = startup_zc_confirmations_required;
 
