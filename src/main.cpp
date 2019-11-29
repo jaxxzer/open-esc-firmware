@@ -8,6 +8,7 @@ extern "C" {
 #include <debug-pins.h>
 #include <global.h>
 #include <isr.h>
+#include <overcurrent-watchdog.h>
 #include <pwm-input.h>
 #include <watchdog.h>
 }
@@ -70,29 +71,6 @@ void system_clock_initialize()
 #elif defined(STM32F3)
   rcc_clock_setup_pll(&rcc_hsi_configs[1]);
 #endif
-}
-
-void overcurrent_watchdog_initialize()
-{
-  // set AWD high threshold
-  ADC_TR1(ADC1) = (ADC_WWDG_CURRENT_MAX << 16) & 0x0fff0000;
-
-  // enable watchdog on selected channel
-  ADC_CFGR1(ADC1) = (ADC_CFGR1(ADC1) & ~ADC_CFGR1_AWD1CH) | ADC_CFGR1_AWD1CH_VAL(ADC_CHANNEL_BUS_CURRENT);
-  ADC_CFGR1(ADC1) |= ADC_CFGR1_AWD1EN | ADC_CFGR1_AWD1SGL;
-
-  // enable watchdog interrupt
-  ADC_IER(ADC1) |= ADC_IER_AWD1IE;
-  nvic_enable_irq(OVERCURRENT_WATCHDOG_IRQ);
-}
-
-void overcurrent_watchdog_isr()
-{
-  bridge_disable();
-  io_write_state();
-
-  stop_motor();
-  while (1) {watchdog_reset();};
 }
 
 int main()

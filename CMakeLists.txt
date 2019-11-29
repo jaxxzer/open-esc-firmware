@@ -63,6 +63,7 @@ set(COMMON_SRC
   ${PROJECT_SOURCE_DIR}/src/main/src/console.c
   ${PROJECT_SOURCE_DIR}/src/main/src/debug-pins.c
   ${PROJECT_SOURCE_DIR}/src/main/src/io.cpp
+  ${PROJECT_SOURCE_DIR}/src/main/src/overcurrent-watchdog.c
   ${PINGCPP_SRC}/message/ping-message-common.h
   ${PINGCPP_SRC}/message/ping-message-openesc.h
 )
