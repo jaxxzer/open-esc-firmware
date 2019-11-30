@@ -87,11 +87,7 @@ int main()
   watchdog_start(10); // 10ms watchdog timeout
 
   bridge_initialize();
-
-  // setup adc synchronization
-  // TODO move to bridge
-  nvic_enable_irq(NVIC_TIM1_CC_IRQ);
-  TIM_DIER(TIM1) |= TIM_DIER_CC4IE;
+  bridge_enable_adc_trigger();
 
   // startup beep
   audio_play_note_blocking(1000, 0x04, 40000);
