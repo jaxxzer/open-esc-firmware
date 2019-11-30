@@ -58,6 +58,7 @@ set(COMMON_SRC
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/pwm-input.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/usart.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/watchdog.c
+  ${PROJECT_SOURCE_DIR}/src/main/src/audio.cpp
   ${PROJECT_SOURCE_DIR}/src/main/src/commutation.c
   ${PROJECT_SOURCE_DIR}/src/main/src/comparator-isr.c
   ${PROJECT_SOURCE_DIR}/src/main/src/console.c
