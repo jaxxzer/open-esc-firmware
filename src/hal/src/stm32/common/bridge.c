@@ -1,6 +1,7 @@
 #include <bridge.h>
 
 #include <libopencm3/cm3/assert.h>
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
@@ -192,9 +193,9 @@ void bridge_set_run_duty(uint16_t duty)
     // set adc sample trigger to 75% period when duty < 50% and
     // 25% period when duty > 50%
     if (duty > 0x400) {
-        TIM1_CCR4 = 0x200;
+        bridge_setup_adc_trigger(0x200);
     } else {
-        TIM1_CCR4 = 0x600;
+        bridge_setup_adc_trigger(0x600);
     }
 
     g_bridge_run_duty = duty;
@@ -217,4 +218,16 @@ void bridge_commutate() {
     *(bridge_comm_states[g_bridge_comm_step].zeroDutyChannel2) = 0;
     *(bridge_comm_states[g_bridge_comm_step].pwmChannel) = g_bridge_run_duty;
     TIM_CCER(TIM1) = bridge_comm_states[g_bridge_comm_step].CCER;
+}
+
+void bridge_enable_adc_trigger()
+{
+  // setup adc synchronization
+  nvic_enable_irq(NVIC_TIM1_CC_IRQ);
+  TIM_DIER(TIM1) |= TIM_DIER_CC4IE;
+}
+
+void bridge_setup_adc_trigger(uint16_t ticks)
+{
+  TIM1_CCR4 = ticks;
 }

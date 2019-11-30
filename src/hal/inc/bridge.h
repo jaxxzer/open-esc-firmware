@@ -27,6 +27,7 @@ void bridge_initialize();
 void bridge_set_state(bridge_state_e state);
 
 void bridge_enable();
+void bridge_enable_adc_trigger();
 void bridge_disable();
 
 // always 4 bit
@@ -36,5 +37,8 @@ void bridge_set_audio_frequency(uint16_t frequency);
 
 // always 12 bit (results in ~21kHz pwm @ 48Mhz)
 void bridge_set_run_duty(uint16_t duty);
+
+// setup adc to trigger when TIM1_CNT == ticks
+void bridge_setup_adc_trigger(uint16_t ticks);
 
 void bridge_commutate();
