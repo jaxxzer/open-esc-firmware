@@ -8,6 +8,7 @@ extern "C" {
 #include <debug-pins.h>
 #include <global.h>
 #include <isr.h>
+#include <led.h>
 #include <overcurrent-watchdog.h>
 #include <pwm-input.h>
 #include <system.h>
@@ -70,12 +71,7 @@ int main()
 
   io_initialize();
 
-  rcc_periph_clock_enable(LED_GPIO_RCC);
-  gpio_mode_setup(LED_GPIO_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_GPIO_PIN);
-  for (uint8_t i = 0; i < 10; i++) {
-    gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
-    for (uint32_t j = 0; j < 100000; j++) { float a = 0.6*9; }
-  }
+  led_initialize();
 
   debug_pins_initialize();
 
@@ -124,7 +120,7 @@ int main()
   while (!g.throttle_valid)
   {
     watchdog_reset();
-    gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+    led_toggle();
     io_process_input();
     // todo beep once in a while
   }
@@ -153,7 +149,7 @@ int main()
 
   while(1) {
     watchdog_reset();
-    gpio_toggle(LED_GPIO_PORT, LED_GPIO_PIN);
+    led_toggle();
     io_process_input();
     if (g.throttle_valid && g.throttle > startup_throttle) {
       bridge_enable();
