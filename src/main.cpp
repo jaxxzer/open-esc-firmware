@@ -14,6 +14,7 @@ extern "C" {
 }
 
 // hpp
+#include <audio.h>
 #include <io.h>
 
 #include <libopencm3/cm3/vector.h>
@@ -107,16 +108,9 @@ int main()
   TIM_DIER(TIM1) |= TIM_DIER_CC4IE;
 
   // startup beep
-  bridge_enable();
-  bridge_set_state(BRIDGE_STATE_AUDIO);
-  bridge_set_audio_duty(0x4);
-  bridge_set_audio_frequency(1000);
-  for (uint32_t i = 0; i < 40000; i++) { watchdog_reset(); io_process_input(); }
-  bridge_set_audio_frequency(1200);
-  for (uint32_t i = 0; i < 40000; i++) { watchdog_reset(); io_process_input(); }
-  bridge_set_audio_frequency(1600);
-  for (uint32_t i = 0; i < 40000; i++) { watchdog_reset(); io_process_input(); }
-  bridge_disable();
+  audio_play_note_blocking(1000, 0x04, 40000);
+  audio_play_note_blocking(1200, 0x04, 40000);
+  audio_play_note_blocking(1600, 0x04, 40000);
   for (int i = 0; i < 9999; i++) { watchdog_reset(); io_process_input(); }
 
   // initialize comparator
@@ -146,12 +140,7 @@ int main()
   }
 
   // pwm input type valid confirmation beep
-  bridge_enable();
-  bridge_set_state(BRIDGE_STATE_AUDIO);
-  bridge_set_audio_duty(0x4);
-  bridge_set_audio_frequency(1000);
-  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); io_process_input(); }
-  bridge_disable();
+  audio_play_note_blocking(1000, 0x04, 90000);
 
   // wait for low throttle
   while (g.throttle > 0) {
@@ -160,12 +149,7 @@ int main()
   }
 
   // low throttle armed beep
-  bridge_enable();
-  bridge_set_state(BRIDGE_STATE_AUDIO);
-  bridge_set_audio_duty(0x4);
-  bridge_set_audio_frequency(1600);
-  for (uint32_t i = 0; i < 90000; i++) { watchdog_reset(); io_process_input(); }
-  bridge_disable();
+  audio_play_note_blocking(1600, 0x04, 90000);
 
   // prepare the motor for run mode (armed)
   bridge_enable();
