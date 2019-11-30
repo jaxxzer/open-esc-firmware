@@ -1,6 +1,7 @@
 
 extern "C" {
 #include <adc.h>
+#include <bemf.h>
 #include <bridge.h>
 #include <commutation.h>
 #include <comparator.h>
@@ -86,8 +87,15 @@ int main()
   audio_play_note_blocking(1600, 0x04, 40000);
   for (int i = 0; i < 9999; i++) { watchdog_reset(); io_process_input(); }
 
+#if defined(FEEDBACK_COMPARATOR)
   // initialize comparator
   comparator_initialize();
+#elif defined(FEEDBACK_BEMF)
+  // initialize bemf
+  bemf_initialize();
+#else
+#error "no feedback defined"
+#endif
 
   // initialize motor run timers
   commutation_timer_initialize();
