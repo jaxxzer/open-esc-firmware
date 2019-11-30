@@ -10,6 +10,7 @@ extern "C" {
 #include <isr.h>
 #include <overcurrent-watchdog.h>
 #include <pwm-input.h>
+#include <system.h>
 #include <watchdog.h>
 }
 
@@ -30,7 +31,6 @@ extern "C" {
 
 // use this throttle in open loop startup
 const uint16_t startup_throttle = 75;
-
 
 // declared/documented in global.h
 uint16_t run_zc_confirmations_required = slow_run_zc_confirmations_required;
@@ -64,19 +64,9 @@ void test_spin()
   while(1) {watchdog_reset();}
 }
 
-// TODO move to hal
-void system_clock_initialize()
-{
-#if defined(STM32F0)
-  rcc_clock_setup_in_hsi_out_48mhz();
-#elif defined(STM32F3)
-  rcc_clock_setup_pll(&rcc_hsi_configs[1]);
-#endif
-}
-
 int main()
 {
-  system_clock_initialize();
+  system_initialize();
 
   io_initialize();
 
