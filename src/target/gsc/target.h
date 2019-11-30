@@ -2,6 +2,8 @@
 
 #include <inttypes.h>
 
+#define FEEDBACK_COMPARATOR
+
 #define LED_GPIO_RCC RCC_GPIOA
 #define LED_GPIO_PORT GPIOA
 #define LED_GPIO_PIN GPIO2

@@ -13,6 +13,8 @@
 #include "../inc/stm32/f0/target.h"
 #include <inttypes.h>
 
+#define FEEDBACK_COMPARATOR
+
 #define LED_GPIO_RCC RCC_GPIOA
 #define LED_GPIO_PORT GPIOA
 #define LED_GPIO_PIN GPIO0
