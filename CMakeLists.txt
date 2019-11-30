@@ -56,6 +56,7 @@ set(COMMON_SRC
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/bridge.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/global.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/pwm-input.c
+  ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/system.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/usart.c
   ${PROJECT_SOURCE_DIR}/src/hal/src/stm32/common/watchdog.c
   ${PROJECT_SOURCE_DIR}/src/main/src/audio.cpp
