@@ -14,6 +14,6 @@ for TARGET_BOARD in $(ls ../src/target -I inc -I gsc -I target.cmake)
 do
     echob "selecting TARGET_BOARD: ${TARGET_BOARD}"
     test cmake --configure -DTARGET_BOARD=${TARGET_BOARD} ..
-    test make
+    test make -j$(nproc)
 done
 popd
