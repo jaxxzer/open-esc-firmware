@@ -2,12 +2,17 @@
 
 #include <global.h>
 
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
 #include <target.h>
 
 #if defined(FEEDBACK_BEMF)
 // stub
 void bemf_initialize()
 {
+    rcc_periph_clock_enable(BEMF_DIVIDER_ENABLE_GPIO_RCC);
+    gpio_mode_setup(BEMF_DIVIDER_ENABLE_GPIO, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, BEMF_DIVIDER_ENABLE_GPIO_PIN);
+    gpio_set(BEMF_DIVIDER_ENABLE_GPIO, BEMF_DIVIDER_ENABLE_GPIO_PIN);
 }
 
 // stub
