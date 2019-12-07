@@ -9,6 +9,7 @@
 
 void overcurrent_watchdog_initialize()
 {
+#if defined(ADC_CHANNEL_BUS_CURRENT)
   // set AWD high threshold
   ADC_TR1(ADC1) = (ADC_WWDG_CURRENT_MAX << 16) & 0x0fff0000;
 
@@ -19,6 +20,7 @@ void overcurrent_watchdog_initialize()
   // enable watchdog interrupt
   ADC_IER(ADC1) |= ADC_IER_AWD1IE;
   nvic_enable_irq(OVERCURRENT_WATCHDOG_IRQ);
+#endif
 }
 
 void overcurrent_watchdog_isr()
