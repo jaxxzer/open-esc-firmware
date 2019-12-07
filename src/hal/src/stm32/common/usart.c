@@ -6,6 +6,10 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/usart.h>
 
+#if defined(STM32G4)
+#include <libopencm3/stm32/g0/dmamux.h>
+#endif
+
 #include <target.h>
 
 #include <string.h>
@@ -39,6 +43,10 @@ void usart_setup_dma_rx(uint32_t usart)
     DMA_CMAR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) = (uint32_t)(_rx_buffer);
     USART_CR3(usart) |= USART_CR3_DMAR;
     DMA_CCR(CONSOLE_RX_DMA, CONSOLE_RX_DMA_CHANNEL) |= DMA_CCR_EN;
+
+#if defined(STM32G4)
+    DMAMUX_CxCR(DMAMUX1, CONSOLE_RX_DMA_CHANNEL) = CONSOLE_RX_DMAMUX_REQID;
+#endif
 }
 
 void usart_setup_dma_tx(uint32_t usart)
@@ -57,6 +65,10 @@ void usart_setup_dma_tx(uint32_t usart)
     // lowest priority
     nvic_set_priority(CONSOLE_TX_DMA_IRQ, 0b11000000);
     nvic_enable_irq(CONSOLE_TX_DMA_IRQ);
+
+#if defined(STM32G4)
+    DMAMUX_CxCR(DMAMUX1, CONSOLE_TX_DMA_CHANNEL) = CONSOLE_TX_DMAMUX_REQID;
+#endif
 }
 
 void usart_initialize(uint32_t usart, uint32_t baudrate)
