@@ -59,37 +59,37 @@ void bridge_initialize()
         BRIDGE_HI_A_GPIO_RCC,
         BRIDGE_HI_A_GPIO_PORT,
         BRIDGE_HI_A_GPIO_PIN,
-        BRIDGE_GPIO_AF);
+        BRIDGE_HI_A_GPIO_AF);
 
     bridge_gpio_setup(
         BRIDGE_HI_B_GPIO_RCC,
         BRIDGE_HI_B_GPIO_PORT,
         BRIDGE_HI_B_GPIO_PIN,
-        BRIDGE_GPIO_AF);
+        BRIDGE_HI_B_GPIO_AF);
 
     bridge_gpio_setup(
         BRIDGE_HI_C_GPIO_RCC,
         BRIDGE_HI_C_GPIO_PORT,
         BRIDGE_HI_C_GPIO_PIN,
-        BRIDGE_GPIO_AF);
+        BRIDGE_HI_C_GPIO_AF);
 
     bridge_gpio_setup(
         BRIDGE_LO_A_GPIO_RCC,
         BRIDGE_LO_A_GPIO_PORT,
         BRIDGE_LO_A_GPIO_PIN,
-        BRIDGE_GPIO_AF);
+        BRIDGE_LO_A_GPIO_AF);
 
     bridge_gpio_setup(
         BRIDGE_LO_B_GPIO_RCC,
         BRIDGE_LO_B_GPIO_PORT,
         BRIDGE_LO_B_GPIO_PIN,
-        BRIDGE_GPIO_AF);
+        BRIDGE_LO_B_GPIO_AF);
 
     bridge_gpio_setup(
         BRIDGE_LO_C_GPIO_RCC,
         BRIDGE_LO_C_GPIO_PORT,
         BRIDGE_LO_C_GPIO_PIN,
-        BRIDGE_GPIO_AF);
+        BRIDGE_LO_C_GPIO_AF);
 
     // initialize timer
     rcc_periph_clock_enable(RCC_TIM1);
