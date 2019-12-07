@@ -1,0 +1,8 @@
+#include <target.h>
+
+uint8_t adc_channels[7] = {
+    ADC_CHANNEL_BUS_VOLTAGE,
+    ADC_CHANNEL_PHASEB_VOLTAGE,
+    ADC_CHANNEL_PHASEC_VOLTAGE,
+    ADC_CHANNEL_PHASEA_VOLTAGE,
+};
