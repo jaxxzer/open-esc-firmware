@@ -22,7 +22,11 @@ uint16_t bemf_get_phase_voltage(bemf_phase_e phase)
         case (BEMF_PHASE_C):
             return g.adc_buffer[ADC_CHANNEL_PHASEC_VOLTAGE];
         case (BEMF_PHASE_N):
+        #if defined(ADC_CHANNEL_NEUTRAL_VOLTAGE)
             return g.adc_buffer[ADC_CHANNEL_NEUTRAL_VOLTAGE];
+        #else
+            return 0;
+        #endif
     }
 }
 #endif
