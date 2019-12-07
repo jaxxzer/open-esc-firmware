@@ -65,9 +65,24 @@ void console_write_adc_info()
 {
     char buffer[120];
     uint8_t size = snprintf(buffer, 120, "temperature: %d\tbus voltage: %d\tbus current: %d\tA: %d\tB: %d\tC: %d\tN: %d\r\n",
+#
+#if defined(ADC_IDX_TEMPERATURE)
         adc_read_channel(ADC_IDX_TEMPERATURE),
+#else
+        0,
+#endif
+
+#if defined(ADC_IDX_BUS_VOLTAGE)
         adc_read_channel(ADC_IDX_BUS_VOLTAGE),
+#else
+        0,
+#endif
+
+#if defined(ADC_IDX_BUS_CURRENT)
         adc_read_channel(ADC_IDX_BUS_CURRENT),
+#else
+        0,
+#endif
 
 #if defined(ADC_IDX_PHASEA_VOLTAGE)
         adc_read_channel(ADC_IDX_PHASEA_VOLTAGE),
