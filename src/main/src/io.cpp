@@ -216,8 +216,16 @@ void io_write_state()
 #else
   message.set_neutral(0);
 #endif
+#if defined(ADC_IDX_BUS_CURRENT)
   message.set_current(g.adc_buffer[ADC_IDX_BUS_CURRENT]);
+#else
+  message.set_current(0);
+#endif
+#if defined(ADC_IDX_BUS_VOLTAGE)
   message.set_voltage(g.adc_buffer[ADC_IDX_BUS_VOLTAGE]);
+#else
+  message.set_voltage(0);
+#endif
   message.set_throttle(g.throttle);
   message.set_commutation_period(TIM_ARR(COMMUTATION_TIMER));
   message.updateChecksum();
