@@ -118,6 +118,18 @@
             ],
             "svdFile": "lib/stm32-boilerplate/lib/svd/stm32f3/STM32F3x4.svd",
             "device": "STM32F334"
+        },
+        {
+            "name": "G431-nucleo",
+            "cwd": "${workspaceRoot}",
+            "executable": "build/debug.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                "lib/stm32-boilerplate/lib/openocd/g4-nucleo.cfg"
+            ],
+            "svdFile": "lib/stm32-boilerplate/lib/svd/stm32g4/STM32G431xx.svd"
         }
     ]
 }
