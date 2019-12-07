@@ -5,6 +5,10 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 
+#if defined(STM32G0) || defined(STM32G4)
+#include <libopencm3/stm32/g0/dmamux.h>
+#endif
+
 #include <target.h>
 #include <global.h>
 
@@ -37,11 +41,15 @@ void adc_initialize()
     dma_set_priority(DMA1, DMA_CHANNEL1, DMA_CCR_PL_VERY_HIGH);
     dma_enable_channel(DMA1, DMA_CHANNEL1);                                    // set EN
 
+#if defined(STM32G0) || defined(STM32G4)
+  DMAMUX_CxCR(DMAMUX1, DMA_CHANNEL1) = ADC_DMAMUX_REQID;
+#endif
+
     rcc_periph_clock_enable(ADC_RCC);
 
     adc_enable_temperature_sensor();
-#if defined(STM32F3)
-    adc_enable_regulator(ADC1);
+#if defined(STM32F3) || defined(STM32G4)
+    adc_enable_regulator(ADC_PERIPH);
       for (long i = 0; i < 100000; i++)
         asm("nop");
     adc_set_clk_prescale(ADC1, ADC_CCR_CKMODE_DIV1);
