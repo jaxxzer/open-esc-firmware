@@ -30,7 +30,7 @@ void adc_initialize()
 #endif
 
     rcc_periph_clock_enable(RCC_DMA1);
-    dma_set_peripheral_address(DMA1, DMA_CHANNEL1, (uint32_t)&ADC_DR(ADC1)); // set CPAR
+    dma_set_peripheral_address(DMA1, DMA_CHANNEL1, (uint32_t)&ADC_DR(ADC_PERIPH)); // set CPAR
     dma_set_memory_address(DMA1, DMA_CHANNEL1, (uint32_t)&g.adc_buffer);             // set CMAR
     dma_set_read_from_peripheral(DMA1, DMA_CHANNEL1);                              // set DIR
     dma_set_memory_size(DMA1, DMA_CHANNEL1, DMA_CCR_MSIZE_16BIT);              // set MSIZE
@@ -52,31 +52,31 @@ void adc_initialize()
     adc_enable_regulator(ADC_PERIPH);
       for (long i = 0; i < 100000; i++)
         asm("nop");
+    // TODO should be ADC_PERIPH
     adc_set_clk_prescale(ADC1, ADC_CCR_CKMODE_DIV1);
 #endif
-    adc_set_regular_sequence(ADC1, sizeof(adc_channels), adc_channels);
-    adc_calibrate(ADC1);
-    // adc_set_continuous_conversion_mode(ADC1);
+    adc_set_regular_sequence(ADC_PERIPH, sizeof(adc_channels), adc_channels);
+    adc_calibrate(ADC_PERIPH);
 
 // TODO unify/de-duplicate libopencm3 here
 // the reading the internal temperature sensor requires a minimum sampling time
 #if defined(STM32F0)
-    adc_set_sample_time_on_all_channels(ADC1, ADC_SMPTIME_071DOT5);
+    adc_set_sample_time_on_all_channels(ADC_PERIPH, ADC_SMPTIME_071DOT5);
 #else
     // TODO handle ADC overrun, longer sample times mitigate this for now.
     // todo increase dma channel priority
-    adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_4DOT5CYC);
-    adc_set_sample_time(ADC1, ADC_CHANNEL_TEMPERATURE, ADC_SMPR_SMP_61DOT5CYC);
+    adc_set_sample_time_on_all_channels(ADC_PERIPH, ADC_SMPR_SMP_4DOT5CYC);
+    adc_set_sample_time(ADC_PERIPH, ADC_CHANNEL_TEMPERATURE, ADC_SMPR_SMP_61DOT5CYC);
 #endif
 
-    adc_enable_dma(ADC1);
-    adc_enable_dma_circular_mode(ADC1);
-    adc_power_on(ADC1);
+    adc_enable_dma(ADC_PERIPH);
+    adc_enable_dma_circular_mode(ADC_PERIPH);
+    adc_power_on(ADC_PERIPH);
 }
 
 void adc_start()
 {
-    adc_start_conversion_regular(ADC1);
+    adc_start_conversion_regular(ADC_PERIPH);
 }
 
 volatile uint16_t adc_read_channel(uint8_t channel)
