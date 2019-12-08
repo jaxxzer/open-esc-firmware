@@ -25,8 +25,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${LINKER_FLAGS} ${ARCH_FLAGS}")
 
 include(${BOILERPLATE}/src/target/f/f.cmake)
 
-set(MAIN_SRC
-  src/main.cpp
+set(TARGET_SRC
   ${ADC_SRC}
   ${COMP_SRC}
   ${DMA_SRC}
@@ -72,8 +71,14 @@ set(COMMON_SRC
   ${PINGCPP_SRC}/message/ping-message-openesc.h
 )
 
-set(EXE_NAME open-esc-${TARGET_BOARD})
-add_executable(${EXE_NAME} ${MAIN_SRC} ${COMMON_SRC})
+if(DEFINED EXAMPLE)
+  set(EXE_NAME open-esc-example-${EXAMPLE})
+  add_executable(${EXE_NAME} ${TARGET_SRC} ${COMMON_SRC} ${PROJECT_SOURCE_DIR}/src/example/${EXAMPLE}/main.cpp)
+else()
+  set(EXE_NAME open-esc-${TARGET_BOARD})
+  add_executable(${EXE_NAME} ${TARGET_SRC} ${COMMON_SRC} src/main.cpp)
+endif()
+
 
 # TODO how to make clean?
 add_custom_command(TARGET ${EXE_NAME} POST_BUILD
