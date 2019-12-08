@@ -66,7 +66,8 @@ void adc_initialize()
     // TODO handle ADC overrun, longer sample times mitigate this for now.
     // todo increase dma channel priority
     adc_set_sample_time_on_all_channels(ADC_PERIPH, ADC_SMPR_SMP_4DOT5CYC);
-    adc_set_sample_time(ADC_PERIPH, ADC_CHANNEL_TEMPERATURE, ADC_SMPR_SMP_61DOT5CYC);
+    // TODO restore/report temperature
+    // adc_set_sample_time(ADC_PERIPH, ADC_CHANNEL_TEMPERATURE, ADC_SMPR_SMP_61DOT5CYC);
 #endif
 
     adc_enable_dma(ADC_PERIPH);
