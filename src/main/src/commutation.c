@@ -41,8 +41,10 @@ void zc_timer_disable_interrupts()
 void stop_motor()
 {
   commutation_timer_disable_interrupts();
+#if defined(FEEDBACK_COMPARATOR)
   comparator_zc_isr_disable();
   zc_timer_disable_interrupts();
+#endif
 }
 
 void start_motor()
@@ -55,7 +57,10 @@ void start_motor()
   zc_counter = zc_confirmations_required;
 
   g_bridge_comm_step = BRIDGE_COMM_STEP0;
+
+#if defined(FEEDBACK_COMPARATOR)
   comparator_set_state((comp_state_e)g_bridge_comm_step);
+#endif
 
   commutation_timer_enable_interrupts();
   zc_timer_enable_interrupts();
@@ -91,10 +96,17 @@ void zc_timer_initialize()
 void commutation_isr()
 {
     bridge_commutate();
+
+#if defined(FEEDBACK_COMPARATOR)
     comparator_zc_isr_disable();
+#endif
 
     zc_counter = zc_confirmations_required; // remove
+
+#if defined(FEEDBACK_COMPARATOR)
     // TODO rotate table to get this right
     comparator_set_state((comp_state_e)(g_bridge_comm_step + 2));
+#endif
+
     debug_pins_toggle2();
 }
