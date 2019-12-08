@@ -13,7 +13,12 @@ pushd build
 for TARGET_BOARD in $(ls ../src/target -I inc -I gsc -I target.cmake)
 do
     echob "selecting TARGET_BOARD: ${TARGET_BOARD}"
-    test cmake --configure -DTARGET_BOARD=${TARGET_BOARD} ..
+    rm -f CMakeCache.txt
+    test cmake -DTARGET_BOARD=${TARGET_BOARD} ..
+    test make -j$(nproc)
+    test cmake -DEXAMPLE=audio-beep ..
+    test make -j$(nproc)
+    test cmake -DEXAMPLE=usart ..
     test make -j$(nproc)
 done
 popd
