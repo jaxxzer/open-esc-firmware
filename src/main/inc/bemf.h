@@ -22,8 +22,11 @@ volatile bemf_step_e g_bemf_step;
 
 void bemf_disable_divider();
 void bemf_enable_divider();
+
 // return voltage in millivolts (~65V  6s or so max for now)
 uint16_t bemf_get_phase_voltage(bemf_phase_e phase);
+uint16_t bemf_get_phase_adc_raw(bemf_phase_e phase);
+
 void bemf_set_step(bemf_step_e new_step);
 void bemf_blank(uint32_t nanoseconds);
 void bemf_unblank_isr();
