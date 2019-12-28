@@ -47,26 +47,6 @@ void io_initialize()
   registers[2] = 3;
 }
 
-void io_write_register(uint16_t address) {
-  openesc_register m;
-  m.set_address(address);
-  m.set_value(((uint8_t*)&g)[address]);
-  m.updateChecksum();
-  // TODO this is not safe (non-copy)
-  io_write_message(&m);
-}
-
-void io_write_register_multi(uint16_t address, uint16_t count) {
-  openesc_register_multi m(count);
-  m.set_address(address);
-  m.set_data_length(count);
-  for (uint16_t i = 0; i < m.data_length(); i++) {
-    m.set_data_at(i, ((uint8_t*)&g)[address + i]);
-  }
-  m.updateChecksum();
-  io_write_message(&m);
-}
-
 void io_handle_message(ping_message* message)
 {
   switch (message->message_id()) {
@@ -100,50 +80,6 @@ void io_handle_message(ping_message* message)
 
         default:
         break;
-      }
-    }
-    break;
-    case (OpenescId::SET_REGISTER):
-    {
-      openesc_set_register* m = (openesc_set_register*)message;
-      if (m->address() > sizeof(g)) {
-        io_write_message(&nack);
-      } else {
-        ((uint8_t*)&g)[m->address()] = m->value();
-        io_write_register(m->address());
-      }
-    }
-    break;
-    case (OpenescId::READ_REGISTER):
-    {
-      openesc_read_register* m = (openesc_read_register*)message;
-      if (m->address() > NUM_REGS) {
-        io_write_message(&nack);
-      } else {
-        io_write_register(m->address());
-      }
-    }
-    break;
-    case (OpenescId::READ_REGISTER_MULTI):
-    {
-      openesc_read_register_multi* m = (openesc_read_register_multi*)message;
-      if (m->address() + m->count() > sizeof(g)) {
-        io_write_message(&nack);
-      } else {
-        io_write_register_multi(m->address(), m->count());
-      }
-    }
-    break;
-    case (OpenescId::SET_REGISTER_MULTI):
-    {
-      openesc_set_register_multi* m = (openesc_set_register_multi*)message;
-      if (m->address() + m->data_length() > sizeof(g)) {
-        io_write_message(&nack);
-      } else {
-        for (uint16_t i = 0; i < m->data_length(); i++) {
-          ((uint8_t*)&g)[m->address() + i] = m->data()[i];
-        }
-        io_write_register_multi(m->address(), m->data_length());
       }
     }
     break;
