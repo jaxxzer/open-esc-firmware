@@ -10,6 +10,8 @@
 
 #include <target.h>
 
+volatile comp_state_e g_comparator_state;
+
 typedef struct
 {
     uint32_t port; // gpio port

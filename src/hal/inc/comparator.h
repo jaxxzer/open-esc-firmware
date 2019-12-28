@@ -14,7 +14,7 @@ typedef enum {
     COMP_STATE5,
 } comp_state_e;
 
-volatile comp_state_e g_comparator_state;
+extern volatile comp_state_e g_comparator_state;
 
 void comparator_initialize();
 

@@ -17,6 +17,8 @@
  #define COMP_HYST COMP_CSR_HYST_NONE
 #endif
 
+volatile comp_state_e g_comparator_state;
+
 volatile uint16_t comparator_states[6] = {
     COMP_HYST | 0x041,
     COMP_HYST | 0x851,
