@@ -7,6 +7,8 @@
 
 extern "C" {
 #include <adc.h>
+#include <bridge.h>
+#include <comparator.h>
 #include <pwm-input.h>
 #include <usart.h>
 }
@@ -164,6 +166,11 @@ void io_write_state()
 #endif
   message.set_throttle(g.throttle);
   message.set_commutation_period(TIM_ARR(COMMUTATION_TIMER));
+#if defined(FEEDBACK_COMPARATOR)
+  message.set_flags(comparator_get_output());
+  message.set_comparator_step(g_comparator_state);
+#endif
+  message.set_bridge_step(g_bridge_comm_step);
   message.updateChecksum();
   io_write_message(&message);
 }
