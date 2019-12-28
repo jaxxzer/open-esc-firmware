@@ -23,54 +23,6 @@
                         "description": "the throttle signal! the throttle controls the duty (torque)"
                     }
                 ]
-            },
-            "set_armed_state": {
-                "id": "101",
-                "description": "arm or disarm the esc",
-                "payload": [
-                    {
-                        "name": "armed",
-                        "type": "u16",
-                        "description": "0: disarmed, 1: armed"
-                    }
-                ]
-            },
-            "set_register": {
-                "id": "102",
-                "description": "write register",
-                "payload": [
-                    {
-                        "name": "value",
-                        "type": "u32",
-                        "description": "register value"
-                    },
-                    {
-                        "name": "address",
-                        "type": "u16",
-                        "description": "register address"
-                    }
-                ]
-            },
-            "set_register_multi": {
-                "id": "103",
-                "description": "write multiple registers",
-                "payload": [
-                    {
-                        "name": "address",
-                        "type": "u16",
-                        "description": "register base address"
-                    },
-                    {
-                        "name": "data",
-                        "type": "vector",
-                        "vector": {
-                            "sizetype": "u16",
-                            "datatype": "u8",
-                            "size": "dynamic"
-                        },
-                        "desciption": "register data"
-                    }
-                ]
             }
         },
         "get": {
@@ -121,76 +73,21 @@
                     {
                         "name": "flags",
                         "type": "u16",
-                        "description": "development flags"
-                    }
-                ]
-            },
-            "register": {
-                "id": "111",
-                "description": "register value",
-                "payload": [
-                    {
-                        "name": "value",
-                        "type": "u32",
-                        "description": "register value"
+                        "description": "development flags; bit0: comparator state"
                     },
                     {
-                        "name": "address",
-                        "type": "u16",
-                        "description": "register address"
-                    }
-                ]
-            },
-            "register_multi": {
-                "id": "112",
-                "description": "multiple sequential register values",
-                "payload": [
-                    {
-                        "name": "address",
-                        "type": "u16",
-                        "description": "starting address"
+                        "name": "comparator_step",
+                        "type": "u8",
+                        "description": "comparator step"
                     },
                     {
-                        "name": "data",
-                        "type": "vector",
-                        "vector": {
-                            "sizetype": "u16",
-                            "datatype": "u8",
-                            "size": "dynamic"
-                        },
-                        "description": "register data"
+                        "name": "bridge_step",
+                        "type": "u8",
+                        "description": "bridge step"
                     }
                 ]
             }
         },
-        "control": {
-            "read_register": {
-                "id": "120",
-                "description": "read a register",
-                "payload": [
-                    {
-                        "name": "address",
-                        "type": "u16",
-                        "description": "register address"
-                    }
-                ]
-            },
-            "read_register_multi": {
-                "id": "121",
-                "description": "read multiple registers",
-                "payload": [
-                    {
-                        "name": "address",
-                        "type": "u16",
-                        "description": "register address"
-                    },
-                    {
-                        "name": "count",
-                        "type": "u16",
-                        "description": "number of registers to read"
-                    }
-                ]
-            }
-        }
+        "control": {}
     }
 }
