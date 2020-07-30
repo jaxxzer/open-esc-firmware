@@ -23,6 +23,22 @@
                         "description": "the throttle signal! the throttle controls the duty (torque)"
                     }
                 ]
+            },
+            "set_parameter": {
+                "id": "102",
+                "description": "set a setting on the device",
+                "payload": [
+                    {
+                        "name": "id",
+                        "type": "u16",
+                        "description": "the parameter id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "u32",
+                        "description": "the new parameter value"
+                    }
+                ]
             }
         },
         "get": {
@@ -84,6 +100,22 @@
                         "name": "bridge_step",
                         "type": "u8",
                         "description": "bridge step"
+                    }
+                ]
+            },
+            "parameter": {
+                "id": "111",
+                "description": "a setting on the device",
+                "payload": [
+                    {
+                        "name": "id",
+                        "type": "u16",
+                        "description": "the setting id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "u32",
+                        "description": "the setting value"
                     }
                 ]
             }
